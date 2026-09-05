@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --paper: #f0ecdf;
+  --ink: #0a0a0a;
+  --yellow: #f5e400;
+  --red: #ff3b30;
+  --white: #ffffff;
+  --font-display: 'Archivo Black', Impact, 'Arial Black', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, Menlo, Consolas, monospace;
+  --shadow: 6px 6px 0 var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a { color: var(--ink); }
+::selection { background: var(--yellow); color: var(--ink); }
+
+.brut-shell {
+  min-height: 100vh;
+  padding: 4vh 5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- Typo massive ---------- */
+.brut-logo {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+.brut-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  margin: 0 0 28px;
+}
+.brut-h {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  line-height: 1;
+  margin: 0 0 16px;
+}
+
+/* ---------- Blocs à bordure épaisse + ombre dure ---------- */
+.brut-block {
+  background: var(--white);
+  border: 4px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+.brut-block.tight { padding: 14px 18px; }
+.brut-block.yellow { background: var(--yellow); }
+.brut-block.ink { background: var(--ink); color: var(--white); }
+.brut-window { width: 100%; max-width: 640px; }
+.brut-window.wide { max-width: 1040px; }
+
+/* ---------- Nav / onglets ---------- */
+.brut-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  width: 100%;
+  max-width: 1040px;
+}
+.brut-nav-item {
+  border: 4px solid var(--ink);
+  background: var(--white);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 8px 14px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.brut-nav-item.active { background: var(--ink); color: var(--white); }
+.brut-nav-item:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.brut-nav-spacer { flex: 1; }
+
+/* ---------- Champs ---------- */
+.brut-field { margin-bottom: 18px; }
+.brut-field label {
+  display: block;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.brut-input {
+  width: 100%;
+  border: 4px solid var(--ink);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  padding: 10px 12px;
+  outline: none;
+}
+.brut-input:focus { background: var(--yellow); }
+.brut-input.code { letter-spacing: 0.6em; text-align: center; font-weight: 700; }
+
+/* ---------- Boutons ---------- */
+.brut-btn {
+  display: inline-block;
+  border: 4px solid var(--ink);
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 11px 20px;
+  box-shadow: 5px 5px 0 var(--yellow);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.06s, box-shadow 0.06s;
+}
+.brut-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--yellow); }
+.brut-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--yellow); }
+.brut-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 5px 5px 0 var(--yellow); }
+.brut-btn.secondary { background: var(--white); color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+.brut-btn.secondary:hover { box-shadow: 7px 7px 0 var(--ink); }
+.brut-btn.danger { background: var(--red); border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+.brut-btn.small { padding: 5px 10px; font-size: 11px; box-shadow: 3px 3px 0 var(--ink); }
+.brut-btn.small:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+
+/* ---------- Message de statut ---------- */
+.brut-status {
+  border: 4px solid var(--ink);
+  padding: 10px 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  margin: 14px 0 0;
+}
+.brut-status:empty { display: none; padding: 0; border: none; margin: 0; }
+.brut-status.err { background: var(--red); color: var(--white); }
+.brut-status.ok { background: var(--yellow); }
+
+/* ---------- Fiches de déploiement (ticket punk) ---------- */
+.brut-ticket {
+  border: 4px solid var(--ink);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: start;
+}
+.brut-ticket:nth-child(even) { transform: rotate(-0.4deg); }
+.brut-ticket:nth-child(odd) { transform: rotate(0.4deg); }
+.brut-ticket-name {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  margin: 0 0 6px;
+}
+.brut-badge {
+  display: inline-block;
+  border: 2px solid var(--ink);
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.brut-badge.active { background: var(--yellow); }
+.brut-badge.inactive { background: var(--paper); }
+.brut-meta { font-size: 12.5px; }
+.brut-spark { font-size: 18px; letter-spacing: 1px; }
+.brut-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+/* ---------- Grille asymétrique stats ---------- */
+.brut-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+.brut-stat {
+  border: 4px solid var(--ink);
+  padding: 10px 12px;
+  background: var(--white);
+}
+.brut-stat .num {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  line-height: 1;
+  display: block;
+}
+.brut-stat .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+hr.brut-rule { border: none; border-top: 4px solid var(--ink); margin: 24px 0; }
+
+.hidden { display: none !important; }
+
+@media (max-width: 640px) {
+  .brut-ticket { grid-template-columns: 1fr; }
+  .brut-actions { flex-direction: row; align-items: center; }
+}
