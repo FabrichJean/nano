@@ -4,25 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/brutal.css">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/palette.js"></script>
   <title>NANO — DASHBOARD</title>
 </head>
 <body>
-  <div class="ui-shell">
-
-    <div class="ui-nav">
+  <div class="ui-nav">
+    <div class="ui-nav-inner">
       <a href="/app" class="ui-nav-item active">Dashboard</a>
       <a href="/teams" class="ui-nav-item">Équipes</a>
       <a href="/settings" class="ui-nav-item">Paramètres</a>
       <span class="ui-nav-spacer"></span>
+      <span id="palette-switch-slot"></span>
       <span class="ui-nav-item" id="user-label" style="cursor:default;"></span>
       <button type="button" id="logout-btn" class="ui-nav-item">Déconnexion</button>
     </div>
+  </div>
+
+  <div class="ui-shell">
 
     <div class="ui-window wide" style="width:100%;">
-      <h1 class="ui-logo" style="font-size: clamp(1.8rem, 5vw, 3rem);">DEPLOY.</h1>
-
-      <div class="ui-panel" style="margin-bottom: 24px; border-top: 8px solid var(--yellow);">
+      <div class="ui-panel accent" style="margin-bottom: 24px;">
+        <h1 class="ui-logo" style="font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 18px;">DEPLOY.</h1>
         <h2 class="ui-h" style="margin-bottom:14px;">Nouveau déploiement</h2>
         <form id="deploy-form">
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
@@ -50,16 +53,14 @@
         <p id="deploy-status" class="ui-status"></p>
       </div>
 
-      <hr class="ui-rule">
+      <div class="ui-panel" style="margin-bottom: 24px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <h2 class="ui-h" id="deployments-heading" style="margin:0;">Déploiements</h2>
+          <button type="button" id="refresh-btn" class="ui-btn secondary small">↻ Rafraîchir</button>
+        </div>
 
-      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-        <h2 class="ui-h" id="deployments-heading" style="margin:0;">Déploiements</h2>
-        <button type="button" id="refresh-btn" class="ui-btn secondary small">↻ Rafraîchir</button>
+        <div id="deployments-list"></div>
       </div>
-
-      <div id="deployments-list"></div>
-
-      <hr class="ui-rule">
 
       <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 24px;" id="bottom-grid">
         <div class="ui-panel tight">
@@ -67,7 +68,7 @@
           <div id="activity-log" style="font-size:13px; font-weight:400;"></div>
         </div>
         <div class="ui-panel ink tight">
-          <h2 class="ui-h" style="font-size:1rem; color:var(--yellow);">Stats</h2>
+          <h2 class="ui-h" style="font-size:1rem;">Stats</h2>
           <div class="ui-stats-grid" id="stats-grid" style="margin-top:0;"></div>
         </div>
       </div>
@@ -103,6 +104,7 @@
         return false;
       }
       document.getElementById("user-label").textContent = decodeUsername().toUpperCase();
+      renderPaletteSwitch();
       return true;
     }
 
@@ -185,7 +187,7 @@
         headingEl.textContent = `Déploiements (${deployments.length})`;
 
         if (!Array.isArray(deployments) || deployments.length === 0) {
-          listEl.innerHTML = `<div class="ui-panel tight"><strong>AUCUN DÉPLOIEMENT.</strong> Balance ton premier .zip ci-dessus.</div>`;
+          listEl.innerHTML = `<p style="margin:8px 0;"><strong>Aucun déploiement.</strong> Balance ton premier .zip ci-dessus.</p>`;
           activityEl.innerHTML = `<p>-- rien à signaler --</p>`;
           statsEl.innerHTML = `<div class="ui-stat"><span class="num">0</span><span class="label">sites</span></div>`;
           return;
@@ -204,10 +206,10 @@
 
         const totalTraffic = deployments.reduce((sum, d) => sum + seededValue(d.id + "t", 2, 40), 0);
         statsEl.innerHTML = `
-          <div class="ui-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${deployments.length}</span><span class="label">sites</span></div>
-          <div class="ui-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${totalTraffic}k</span><span class="label">reqs/24h</span></div>
-          <div class="ui-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">99.8%</span><span class="label">uptime</span></div>
-          <div class="ui-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${(totalTraffic * 0.03).toFixed(1)}</span><span class="label">Go bande passante</span></div>
+          <div class="ui-stat on-ink"><span class="num">${deployments.length}</span><span class="label">sites</span></div>
+          <div class="ui-stat on-ink"><span class="num">${totalTraffic}k</span><span class="label">reqs/24h</span></div>
+          <div class="ui-stat on-ink"><span class="num">99.8%</span><span class="label">uptime</span></div>
+          <div class="ui-stat on-ink"><span class="num">${(totalTraffic * 0.03).toFixed(1)}</span><span class="label">Go bande passante</span></div>
         `;
       } catch (err) {
         listEl.innerHTML = `<div class="ui-status err" style="display:block;">ERREUR DE CHARGEMENT</div>`;
@@ -263,7 +265,7 @@
     ["dragover", "dragenter"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
-        dropZone.style.background = "var(--yellow)";
+        dropZone.style.background = "rgba(255,255,255,0.15)";
       });
     });
     ["dragleave", "drop"].forEach((evt) => {
