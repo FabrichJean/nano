@@ -27,9 +27,13 @@ app.use(cors({
   origin: '*' 
 }));
 app.use(express.json());
+const MAX_DEPLOYMENT_SIZE_BYTES = 50 * 1024 * 1024;
+
 app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 },
-  createParentPath: true
+  limits: { fileSize: MAX_DEPLOYMENT_SIZE_BYTES },
+  createParentPath: true,
+  abortOnLimit: true,
+  responseOnLimit: JSON.stringify({ error: `Le fichier dépasse la taille maximale autorisée (${MAX_DEPLOYMENT_SIZE_BYTES / (1024 * 1024)} Mo)` })
 }));
 
 app.get('/', (_req, res) => {

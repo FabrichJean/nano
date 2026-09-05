@@ -75,6 +75,10 @@ if (process.env.USERNAME && process.env.PASSWORD) {
   }
 }
 
+const adminUser = process.env.USERNAME
+  ? (db.prepare('SELECT id FROM users WHERE username = ?').get(process.env.USERNAME) as { id: string } | undefined)
+  : undefined;
+
 const defaultSites: Deployment[] = [
   {
     id: 'kdhak',
@@ -108,5 +112,16 @@ const seedStmt = db.prepare(`
 `);
 
 for (const site of defaultSites) {
-  seedStmt.run({ ...site, ownerId: site.ownerId ?? null });
+  seedStmt.run({ ...site, ownerId: adminUser?.id ?? null });
+}
+
+// Migration : ces sites de démo étaient auparavant publics (ownerId NULL, visibles
+// par tous les comptes). On les rattache au compte admin s'ils n'ont pas déjà un propriétaire.
+if (adminUser) {
+  const defaultSiteIds = defaultSites.map((site) => site.id);
+  const placeholders = defaultSiteIds.map(() => '?').join(', ');
+  db.prepare(`
+    UPDATE deployments SET ownerId = ?
+    WHERE id IN (${placeholders}) AND ownerId IS NULL
+  `).run(adminUser.id, ...defaultSiteIds);
 }

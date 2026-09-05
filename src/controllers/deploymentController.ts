@@ -15,6 +15,10 @@ export const createDeployment = async (req: AuthenticatedRequest, res: Response)
       return res.status(400).json({ error: 'No build files uploaded' });
     }
 
+    if (!Array.isArray(req.files.build) && req.files.build.truncated) {
+      return res.status(413).json({ error: 'Le fichier dépasse la taille maximale autorisée' });
+    }
+
     const validation = createDeploymentSchema.safeParse(req.body);
     if (!validation.success) {
       return res.status(400).json({ error: validation.error });
