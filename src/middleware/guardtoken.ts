@@ -6,20 +6,17 @@ const verifyToken = (token: string) => {
 };
 
 export const guardToken = (req: Request, res: Response, next: NextFunction) => {
-    const token = (() => {
-        const headers = req.headers;
-        const bearer = headers.authorization! as string;
-        return bearer.split(' ')[1];
-    })();
+    const bearer = req.headers.authorization;
+    const token = bearer?.split(' ')[1];
 
-    if (token) {
-        try {
-            const decoded = verifyToken(token);
-            res.status(202).send()
-        } catch (error) {
-            res.status(400).send()
-        }
-    } else {
+    if (!token) {
+        return res.status(400).send();
+    }
+
+    try {
+        (req as any).user = verifyToken(token);
+        next();
+    } catch (error) {
         res.status(400).send()
     }
 }

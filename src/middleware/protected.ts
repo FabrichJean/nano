@@ -8,7 +8,7 @@ export const protectRoute = (req: { query: { username: any; password: any; }; },
     if (username === process.env.USERNAME && password === process.env.PASSWORD) {
         
     //   res.redirect("/app")
-        res.status(200).send({token: sign(Math.random().toString(), process.env.JWT_SECRET as string)})
+        res.status(200).send({token: sign({ username }, process.env.JWT_SECRET as string, { expiresIn: '1d' })})
       return;
     }
     res.status(400).send()

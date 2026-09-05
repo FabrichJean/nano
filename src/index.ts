@@ -13,6 +13,15 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const uploadsDir = path.join(__dirname, '../uploads');
+
+function resolveSafeUploadPath(sub: string): string | null {
+  const resolved = path.normalize(path.join(uploadsDir, sub));
+  if (resolved !== uploadsDir && !resolved.startsWith(uploadsDir + path.sep)) {
+    return null;
+  }
+  return resolved;
+}
 
 app.use(cors({
   origin: '*' 
@@ -42,9 +51,13 @@ app.use("*", injectHeaderScript);
 
 app.get('/~/:id*', (_req, res) => {
   const sub = _req.originalUrl.replace("/~", "")
-  
-  const basePath = path.join(__dirname, '../uploads', sub);
-  
+
+  const basePath = resolveSafeUploadPath(sub);
+  if (!basePath) {
+    res.status(400).send('Chemin invalide');
+    return;
+  }
+
   if(sub.split("/").length !== 2){
     res.sendFile(basePath)
     return
@@ -72,7 +85,9 @@ app.get('/~/:id*', (_req, res) => {
 
 app.use('/api/deployments', deploymentRoutes);
 
-app.get("/auth", guardToken)
+app.get("/auth", guardToken, (_req, res) => {
+  res.status(202).send();
+});
 
 app.get('/ping', (_req, res) => {
   res.json("pong !");
@@ -92,9 +107,13 @@ app.get('*', (req, res, next) => {
     }
   
     const sub = redr.join("").replace("/~", "")
-    
-    const basePath = path.join(__dirname, '../uploads', redr?.at(4)!);
-  
+
+    const basePath = resolveSafeUploadPath(redr?.at(4) ?? "");
+    if (!basePath) {
+      res.status(400).send('Chemin invalide');
+      return;
+    }
+
     // Lire les fichiers et dossiers dans le chemin
     fs.readdir(basePath, { withFileTypes: true }, (err, files) => {
         if (err) {
