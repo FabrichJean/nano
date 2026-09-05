@@ -4,144 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Nano - Tableau de Bord</title>
-  <style>
-    body { background: #000000; }
-    .card { background: #0d0d0d; border: 1px solid #222222; }
-    .card-soft { background: #0a0a0a; border: 1px solid #1a1a1a; }
-    .grad-btn { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
-    .grad-btn:hover { filter: brightness(1.1); }
-    .grad-ring { background: linear-gradient(135deg, #22d3ee, #8b5cf6, #ec4899); }
-    .sparkline-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: draw 1.4s ease-out forwards; }
-    @keyframes draw { to { stroke-dashoffset: 0; } }
-    .pulse-dot { animation: pulse-glow 2.4s ease-in-out infinite; }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.55; r: 2.4; }
-      50% { opacity: 1; r: 3.6; }
-    }
-    .tab-active { background: #1a1a1a; color: #fff; }
-    .tab-inactive { color: #8a8a8a; }
-    .tab-inactive:hover { color: #fff; }
-  </style>
+  <link rel="stylesheet" href="/brutal.css">
+  <title>NANO — DASHBOARD</title>
 </head>
-<body class="min-h-screen text-white">
+<body>
+  <div class="brut-shell">
 
-  <header class="border-b border-[#1a1a1a]">
-    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
-      <div class="flex items-center gap-2 shrink-0">
-        <img src="/ghost.png" alt="Nano" class="w-7 h-7" />
-        <span class="text-lg font-bold tracking-tight">Nano</span>
-      </div>
-
-      <nav class="flex items-center gap-1 flex-1">
-        <a href="/app" class="tab-active flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          Tableau de Bord
-        </a>
-        <a href="/teams" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Équipes
-        </a>
-        <a href="/settings" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Paramètres
-        </a>
-      </nav>
-
-      <div class="flex items-center gap-3 shrink-0">
-        <div id="avatar" class="grad-ring w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold p-[2px]">
-          <span id="avatar-inner" class="w-full h-full rounded-full bg-[#0d0d0d] flex items-center justify-center">?</span>
-        </div>
-        <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Se déconnecter</button>
-      </div>
+    <div class="brut-nav">
+      <a href="/app" class="brut-nav-item active">Dashboard</a>
+      <a href="/teams" class="brut-nav-item">Équipes</a>
+      <a href="/settings" class="brut-nav-item">Paramètres</a>
+      <span class="brut-nav-spacer"></span>
+      <span class="brut-nav-item" id="user-label" style="cursor:default;"></span>
+      <button type="button" id="logout-btn" class="brut-nav-item">Déconnexion</button>
     </div>
-  </header>
 
-  <main class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="brut-window wide" style="width:100%;">
+      <h1 class="brut-logo" style="font-size: clamp(1.8rem, 5vw, 3rem);">DEPLOY.</h1>
 
-    <div class="lg:col-span-2 flex flex-col gap-6 min-w-0">
-
-      <!-- Nouveau déploiement -->
-      <section class="card rounded-2xl p-6">
-        <h2 class="text-base font-semibold mb-4">Nouveau déploiement</h2>
-        <form id="deploy-form" class="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr_auto] gap-3 items-start">
-          <div>
-            <label class="block text-xs text-gray-400 mb-1.5">Nom du projet</label>
-            <input
-              type="text" id="deploy-name" name="name" placeholder="Nom du projet" required
-              class="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-[#222222] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-          </div>
-          <div>
-            <label class="block text-xs text-gray-400 mb-1.5">Fichier de déploiement</label>
-            <div
-              id="drop-zone"
-              class="flex items-center gap-2 px-3.5 py-2.5 bg-[#0a0a0a] border border-dashed border-[#2e2e2e] rounded-lg text-sm text-gray-400 transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span id="file-label" class="truncate flex-1">Glisser-déposer un fichier .zip</span>
-              <button type="button" id="browse-btn" class="text-xs px-2.5 py-1 rounded-md border border-[#2e2e2e] text-gray-300 hover:border-gray-500 shrink-0">Parcourir</button>
-              <input type="file" id="deploy-file" name="build" accept=".zip" required class="hidden">
+      <div class="brut-block yellow" style="margin-bottom: 24px;">
+        <h2 class="brut-h" style="margin-bottom:14px;">Nouveau déploiement</h2>
+        <form id="deploy-form">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="brut-field" style="margin-bottom:10px;">
+              <label for="deploy-name">Nom du site</label>
+              <input type="text" id="deploy-name" name="name" class="brut-input" placeholder="mon-site" required>
+            </div>
+            <div class="brut-field" style="margin-bottom:10px;">
+              <label>Fichier .zip</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <button type="button" id="browse-btn" class="brut-btn secondary small">Choisir</button>
+                <span id="file-label" style="font-size:12.5px; font-weight:700;">aucun fichier</span>
+                <input type="file" id="deploy-file" name="build" accept=".zip" required class="hidden">
+              </div>
             </div>
           </div>
-          <button
-            type="submit" id="deploy-submit"
-            class="grad-btn transition-all font-semibold text-sm px-6 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed sm:mt-[22px]"
-          >
-            Déployer
-          </button>
+          <div id="drop-zone" style="border:3px dashed var(--ink); padding:10px 14px; margin: 6px 0 14px; font-size:12.5px; font-weight:700; text-align:center;">
+            OU GLISSE-DÉPOSE UN .ZIP ICI
+          </div>
+          <button type="submit" id="deploy-submit" class="brut-btn">Déployer maintenant →</button>
         </form>
-        <p id="deploy-error" class="text-sm text-red-400 mt-3 hidden"></p>
-      </section>
+        <p id="deploy-status" class="brut-status"></p>
+      </div>
 
-      <!-- Déploiements -->
-      <section class="card rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-base font-semibold">Déploiements</h2>
-          <button id="refresh-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Rafraîchir</button>
-        </div>
+      <hr class="brut-rule">
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-[640px]">
-            <thead>
-              <tr class="text-left text-gray-500 border-b border-[#1a1a1a]">
-                <th class="pb-2 font-medium">Projet</th>
-                <th class="pb-2 font-medium">Micro-analytics</th>
-                <th class="pb-2 font-medium">Trafic (24h)</th>
-                <th class="pb-2 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="deployments-body">
-              <tr><td colspan="4" class="py-6 text-gray-500 text-sm">Chargement...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+        <h2 class="brut-h" id="deployments-heading" style="margin:0;">Déploiements</h2>
+        <button type="button" id="refresh-btn" class="brut-btn secondary small">↻ Rafraîchir</button>
+      </div>
 
-    </div>
+      <div id="deployments-list"></div>
 
-    <div class="flex flex-col gap-6 min-w-0">
+      <hr class="brut-rule">
 
-      <!-- Activité récente -->
-      <section class="card rounded-2xl p-5">
-        <h2 class="text-sm font-semibold mb-3">Activité Récente</h2>
-        <ul id="activity-list" class="space-y-3 text-sm">
-          <li class="text-gray-500 text-sm">Chargement...</li>
-        </ul>
-      </section>
-
-      <!-- Performance Globe -->
-      <section class="card rounded-2xl p-5">
-        <h2 class="text-sm font-semibold mb-3">Performance Globale</h2>
-        <svg viewBox="0 0 200 200" class="w-full h-auto">
-          <circle cx="100" cy="100" r="80" fill="none" stroke="#222222" stroke-width="1"/>
-          <ellipse cx="100" cy="100" rx="80" ry="30" fill="none" stroke="#222222" stroke-width="1"/>
-          <ellipse cx="100" cy="100" rx="80" ry="55" fill="none" stroke="#222222" stroke-width="1"/>
-          <line x1="20" y1="100" x2="180" y2="100" stroke="#222222" stroke-width="1"/>
-          <ellipse cx="100" cy="100" rx="30" ry="80" fill="none" stroke="#222222" stroke-width="1"/>
-          <ellipse cx="100" cy="100" rx="55" ry="80" fill="none" stroke="#222222" stroke-width="1"/>
-          <line x1="100" y1="20" x2="100" y2="180" stroke="#222222" stroke-width="1"/>
+      <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 24px;" id="bottom-grid">
+        <div class="brut-block tight">
+          <h2 class="brut-h" style="font-size:1rem;">Activité récente</h2>
+          <div id="activity-log" style="font-size:13px; font-weight:700;"></div>
           <circle cx="70" cy="72" r="2.6" fill="#22d3ee" class="pulse-dot" style="animation-delay:0s"/>
           <circle cx="135" cy="88" r="2.6" fill="#8b5cf6" class="pulse-dot" style="animation-delay:.4s"/>
           <circle cx="105" cy="130" r="2.6" fill="#ec4899" class="pulse-dot" style="animation-delay:.8s"/>
