@@ -4,67 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Nano - Connexion</title>
+  <link rel="stylesheet" href="/brutal.css">
+  <title>NANO — LOGIN</title>
 </head>
-<body class="bg-black min-h-screen flex flex-col items-center justify-center text-white">
+<body>
+  <div class="brut-shell">
+    <h1 class="brut-logo">NANO</h1>
+    <p class="brut-tag">★ deploy or die ★</p>
 
-  <div class="flex items-center gap-2 mb-8">
-    <img src="/ghost.png" alt="Nano" class="w-9 h-9" />
-    <span class="text-2xl font-bold tracking-tight">Nano</span>
-  </div>
+    <div class="brut-block brut-window">
+      <h2 class="brut-h">Connexion</h2>
 
-  <div class="bg-neutral-950 border border-neutral-800 p-8 rounded-2xl shadow-xl w-full max-w-md">
-    <h1 class="text-xl font-semibold text-center mb-1">Connexion</h1>
-    <p class="text-sm text-gray-400 text-center mb-6">Accède à ton espace de déploiement</p>
+      <form id="login-form">
+        <div class="brut-field">
+          <label for="identifier">Identifiant / Email</label>
+          <input type="text" id="identifier" name="identifier" class="brut-input" autocomplete="username" required autofocus>
+        </div>
+        <div class="brut-field">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" class="brut-input" autocomplete="current-password" required>
+        </div>
 
-    <form id="login-form" class="space-y-4">
-      <div>
-        <label for="identifier" class="block text-sm font-medium text-gray-300 mb-1">Nom d'utilisateur ou email</label>
-        <input
-          type="text"
-          id="identifier"
-          name="identifier"
-          required
-          autocomplete="username"
-          class="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-      </div>
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Mot de passe</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          autocomplete="current-password"
-          class="w-full px-4 py-2.5 bg-neutral-900 border border-neutral-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-      </div>
+        <button type="submit" id="submit-btn" class="brut-btn">Se connecter →</button>
+      </form>
 
-      <p id="error" class="text-sm text-red-400 hidden">Identifiants incorrects.</p>
+      <p id="status" class="brut-status"></p>
+    </div>
 
-      <button
-        type="submit"
-        id="submit-btn"
-        class="w-full bg-blue-600 hover:bg-blue-500 transition-colors text-white font-semibold py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-      >
-        Se connecter
-      </button>
-    </form>
-
-    <p class="text-sm text-gray-400 text-center mt-6">
-      Pas encore de compte ?
-      <a href="/register" class="text-blue-500 hover:underline">Créer un compte</a>
+    <p style="margin-top: 22px; font-weight: 700; text-transform: uppercase; font-size: 13px;">
+      Pas de compte ? <a href="/register" style="text-decoration: underline;">Inscris-toi ici</a>
     </p>
   </div>
-
-  <footer class="mt-8 text-gray-500 text-sm">
-    Développé par
-    <a href="https://github.com/fabrichgit" target="_blank" class="text-blue-500 hover:underline">
-      Fabrich
-    </a>
-  </footer>
 
   <script>
     window.addEventListener("DOMContentLoaded", async () => {
@@ -84,14 +54,19 @@
     });
 
     const form = document.getElementById("login-form");
-    const errorEl = document.getElementById("error");
+    const statusEl = document.getElementById("status");
     const submitBtn = document.getElementById("submit-btn");
+
+    function setStatus(text, kind) {
+      statusEl.textContent = text || "";
+      statusEl.classList.remove("err", "ok");
+      if (kind) statusEl.classList.add(kind);
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      errorEl.classList.add("hidden");
+      setStatus("");
       submitBtn.disabled = true;
-      submitBtn.textContent = "Connexion...";
 
       const data = new FormData(form);
       const identifier = data.get("identifier");
@@ -117,14 +92,11 @@
           return;
         }
 
-        errorEl.textContent = body.error || "Identifiants incorrects.";
-        errorEl.classList.remove("hidden");
+        setStatus(body.error || "Identifiants incorrects.", "err");
       } catch (err) {
-        errorEl.textContent = "Erreur réseau, réessaie.";
-        errorEl.classList.remove("hidden");
+        setStatus("Erreur réseau, réessaie.", "err");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Se connecter";
       }
     });
   </script>
