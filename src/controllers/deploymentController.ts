@@ -26,7 +26,7 @@ export const createDeployment = async (req: Request, res: Response) => {
 
     res.status(201).json(deployment);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create deployment' });
+    res.status(500).json({ error, message: 'Failed to create deploymenttt' });
   }
 };
 

@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import { Deployment } from '../types/deployment';
 import { extractZip } from '../utils/fileUtils';
+import axios from "axios";
+import { uploadHeader, uploadRoute, uploadToEpta } from '../utils/epta';
 
 export default class DeploymentService {
   private deploymentsPath: string;
@@ -53,12 +55,15 @@ export default class DeploymentService {
     fs.mkdirSync(deploymentPath);
 
     const uploadedFile = files.build;
-    const zipPath = path.join(deploymentPath, 'build.zip');
+    const zipPath = path.join(deploymentPath, `${name}.zip`);
     await uploadedFile.mv(zipPath);
 
     // Extract ZIP file directly to the deployment path
     await extractZip(zipPath, deploymentPath);
 
+    // upload zip to epta
+    await uploadToEpta(zipPath);
+    
     // Remove ZIP file after extraction
     fs.unlinkSync(zipPath);
 
@@ -72,6 +77,7 @@ export default class DeploymentService {
     };
 
     this.deployments.set(id, deployment);
+
     return deployment;
   }
 
