@@ -62,40 +62,14 @@
         <div class="brut-block tight">
           <h2 class="brut-h" style="font-size:1rem;">Activité récente</h2>
           <div id="activity-log" style="font-size:13px; font-weight:700;"></div>
-          <circle cx="70" cy="72" r="2.6" fill="#22d3ee" class="pulse-dot" style="animation-delay:0s"/>
-          <circle cx="135" cy="88" r="2.6" fill="#8b5cf6" class="pulse-dot" style="animation-delay:.4s"/>
-          <circle cx="105" cy="130" r="2.6" fill="#ec4899" class="pulse-dot" style="animation-delay:.8s"/>
-          <circle cx="60" cy="120" r="2.6" fill="#22d3ee" class="pulse-dot" style="animation-delay:1.2s"/>
-          <circle cx="140" cy="130" r="2.6" fill="#8b5cf6" class="pulse-dot" style="animation-delay:1.6s"/>
-        </svg>
-        <p class="text-xs text-gray-500 text-center mt-1">Répartition indicative des requêtes par région</p>
-      </section>
-
-      <!-- Statistiques rapides -->
-      <section class="card rounded-2xl p-5">
-        <h2 class="text-sm font-semibold mb-3">Statistiques Rapides</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p id="stat-deployments" class="text-2xl font-bold">0</p>
-            <p class="text-xs text-gray-500">Déploiements actifs</p>
-          </div>
-          <div>
-            <p id="stat-requests" class="text-2xl font-bold">0</p>
-            <p class="text-xs text-gray-500">Requêtes (24h)</p>
-          </div>
-          <div>
-            <p id="stat-uptime" class="text-2xl font-bold">99.8%</p>
-            <p class="text-xs text-gray-500">Disponibilité</p>
-          </div>
-          <div>
-            <p id="stat-bandwidth" class="text-2xl font-bold">0 Go</p>
-            <p class="text-xs text-gray-500">Bande passante</p>
-          </div>
         </div>
-      </section>
-
+        <div class="brut-block ink tight">
+          <h2 class="brut-h" style="font-size:1rem; color:var(--yellow);">Stats</h2>
+          <div class="brut-stats-grid" id="stats-grid" style="margin-top:0;"></div>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
 
   <script>
     const token = localStorage.getItem("billet");
@@ -106,8 +80,7 @@
 
     function decodeUsername() {
       try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        return payload.username || "?";
+        return JSON.parse(atob(token.split(".")[1])).username || "?";
       } catch {
         return "?";
       }
@@ -124,7 +97,7 @@
         window.location.href = "/login";
         return false;
       }
-      document.getElementById("avatar-inner").textContent = decodeUsername().slice(0, 1).toUpperCase();
+      document.getElementById("user-label").textContent = decodeUsername().toUpperCase();
       return true;
     }
 
@@ -133,20 +106,18 @@
       window.location.href = "/login";
     });
 
-    // Nombre déterministe par nom, pour des métriques de démo stables (pas de vraies analytics côté backend)
     function seededValue(seed, min, max) {
       let hash = 0;
       for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
       return min + (hash % (max - min));
     }
 
-    function sparklinePoints(seed) {
-      const points = [];
-      for (let i = 0; i < 12; i++) {
-        points.push(seededValue(seed + i, 8, 32));
-      }
-      const max = Math.max(...points);
-      return points.map((v, i) => `${i * (100 / 11)},${32 - (v / max) * 28}`).join(" ");
+    const BLOCKS = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
+    function sparkline(seed, len) {
+      len = len || 10;
+      let s = "";
+      for (let i = 0; i < len; i++) s += BLOCKS[seededValue(seed + i, 0, BLOCKS.length)];
+      return s;
     }
 
     function relativeTime(value) {
@@ -171,94 +142,70 @@
       return date.toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "numeric" });
     }
 
-    function statusBadge(status) {
-      const active = status === "active";
-      return `<span class="text-xs px-2 py-0.5 rounded-full ${active ? "bg-green-500/10 text-green-400" : "bg-gray-500/10 text-gray-400"}">${status}</span>`;
-    }
-
-    function deploymentRow(dep) {
+    function deploymentTicket(dep) {
       const health = (99 + seededValue(dep.id, 0, 10) / 10).toFixed(1);
       const traffic = seededValue(dep.id + "t", 2, 40);
-      const points = sparklinePoints(dep.id);
 
       return `
-        <tr class="border-b border-[#1a1a1a] last:border-0">
-          <td class="py-3 pr-4 align-top">
-            <div class="flex items-center gap-2">
-              <span class="font-medium">${dep.name}</span>
-              ${statusBadge(dep.status)}
-            </div>
-            <a href="${dep.url}" target="_blank" class="text-xs text-blue-400 hover:underline break-all">${dep.url}</a>
-            <p class="text-xs text-gray-500 mt-0.5">Créé le ${formatDate(dep.createdAt)}</p>
-          </td>
-          <td class="py-3 pr-4 align-top text-xs text-gray-400">
-            <p class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Santé: ${health}% OK</p>
-            <p class="mt-1">Dernière mise à jour: ${relativeTime(dep.createdAt)}</p>
-          </td>
-          <td class="py-3 pr-4 align-top">
-            <svg viewBox="0 0 100 32" class="w-24 h-8">
-              <polyline points="${points}" fill="none" stroke="#3b82f6" stroke-width="2" class="sparkline-path"/>
-            </svg>
-            <p class="text-xs text-gray-500 mt-0.5">${traffic}k reqs</p>
-          </td>
-          <td class="py-3 align-top text-right whitespace-nowrap">
-            <a href="${dep.url}" target="_blank" class="text-xs px-3 py-1.5 rounded-lg border border-[#2e2e2e] hover:border-gray-500 transition-colors inline-block">Ouvrir</a>
-            <button data-id="${dep.id}" class="delete-btn text-xs px-3 py-1.5 rounded-lg border border-red-900/60 text-red-400 hover:bg-red-900/20 transition-colors ml-2">Supprimer</button>
-          </td>
-        </tr>
-      `;
-    }
-
-    function activityItem(dep) {
-      return `
-        <li class="flex items-start gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
-          <div class="min-w-0 flex-1">
-            <p class="font-medium truncate">${dep.name}</p>
-            <p class="text-xs text-gray-500">Créé le ${formatDate(dep.createdAt)}</p>
+        <div class="brut-ticket">
+          <div>
+            <p class="brut-ticket-name">${dep.name}<span class="brut-badge ${dep.status}">${dep.status}</span></p>
+            <p class="brut-meta"><a href="${dep.url}" target="_blank">${dep.url}</a></p>
+            <p class="brut-meta">créé le ${formatDate(dep.createdAt)} · santé ${health}% · maj ${relativeTime(dep.createdAt)}</p>
+            <p class="brut-spark">${sparkline(dep.id)} <span class="brut-meta">${traffic}k reqs/24h</span></p>
           </div>
-          <span class="text-xs text-gray-500 shrink-0">${relativeTime(dep.createdAt)}</span>
-        </li>
+          <div class="brut-actions">
+            <a href="${dep.url}" target="_blank" class="brut-btn secondary small">Ouvrir</a>
+            <button data-id="${dep.id}" class="delete-btn brut-btn danger small">Supprimer</button>
+          </div>
+        </div>
       `;
     }
 
     async function loadDeployments() {
-      const bodyEl = document.getElementById("deployments-body");
-      const activityEl = document.getElementById("activity-list");
+      const listEl = document.getElementById("deployments-list");
+      const headingEl = document.getElementById("deployments-heading");
+      const activityEl = document.getElementById("activity-log");
+      const statsEl = document.getElementById("stats-grid");
 
       try {
         const res = await fetch("/api/deployments", { headers: authHeaders() });
         const deployments = await res.json();
 
+        headingEl.textContent = `Déploiements (${deployments.length})`;
+
         if (!Array.isArray(deployments) || deployments.length === 0) {
-          bodyEl.innerHTML = `<tr><td colspan="4" class="py-6 text-gray-500 text-sm">Aucun déploiement pour le moment.</td></tr>`;
-          activityEl.innerHTML = `<li class="text-gray-500 text-sm">Aucune activité.</li>`;
-          document.getElementById("stat-deployments").textContent = "0";
-          document.getElementById("stat-requests").textContent = "0";
-          document.getElementById("stat-bandwidth").textContent = "0 Go";
+          listEl.innerHTML = `<div class="brut-block tight"><strong>AUCUN DÉPLOIEMENT.</strong> Balance ton premier .zip ci-dessus.</div>`;
+          activityEl.innerHTML = `<p>-- rien à signaler --</p>`;
+          statsEl.innerHTML = `<div class="brut-stat"><span class="num">0</span><span class="label">sites</span></div>`;
           return;
         }
 
-        bodyEl.innerHTML = deployments.map(deploymentRow).join("");
+        listEl.innerHTML = deployments.map(deploymentTicket).join("");
 
         document.querySelectorAll(".delete-btn").forEach((btn) => {
           btn.addEventListener("click", () => deleteDeployment(btn.dataset.id));
         });
 
         const sorted = [...deployments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        activityEl.innerHTML = sorted.slice(0, 4).map(activityItem).join("");
+        activityEl.innerHTML = sorted.slice(0, 5).map((d) =>
+          `<p style="margin:4px 0;">▸ ${d.name} — ${relativeTime(d.createdAt)}</p>`
+        ).join("");
 
         const totalTraffic = deployments.reduce((sum, d) => sum + seededValue(d.id + "t", 2, 40), 0);
-        document.getElementById("stat-deployments").textContent = deployments.length;
-        document.getElementById("stat-requests").textContent = `${totalTraffic}k`;
-        document.getElementById("stat-bandwidth").textContent = `${(totalTraffic * 0.03).toFixed(1)} Go`;
+        statsEl.innerHTML = `
+          <div class="brut-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${deployments.length}</span><span class="label">sites</span></div>
+          <div class="brut-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${totalTraffic}k</span><span class="label">reqs/24h</span></div>
+          <div class="brut-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">99.8%</span><span class="label">uptime</span></div>
+          <div class="brut-stat" style="background:var(--ink); border-color:var(--yellow); color:var(--white);"><span class="num" style="color:var(--yellow);">${(totalTraffic * 0.03).toFixed(1)}</span><span class="label">Go bande passante</span></div>
+        `;
       } catch (err) {
-        bodyEl.innerHTML = `<tr><td colspan="4" class="py-6 text-red-400 text-sm">Erreur lors du chargement des déploiements.</td></tr>`;
+        listEl.innerHTML = `<div class="brut-status err" style="display:block;">ERREUR DE CHARGEMENT</div>`;
       }
     }
 
     async function deleteDeployment(id) {
-      if (!confirm("Supprimer ce déploiement ?")) return;
+      if (!confirm(`Supprimer "${id}" ? C'est définitif.`)) return;
 
       const res = await fetch(`/api/deployments/${encodeURIComponent(id)}`, {
         method: "DELETE",
@@ -280,19 +227,19 @@
 
     document.getElementById("browse-btn").addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", () => {
-      fileLabel.textContent = fileInput.files[0]?.name || "Glisser-déposer un fichier .zip";
+      fileLabel.textContent = fileInput.files[0]?.name || "aucun fichier";
     });
 
     ["dragover", "dragenter"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
-        dropZone.classList.add("border-blue-500");
+        dropZone.style.background = "var(--yellow)";
       });
     });
     ["dragleave", "drop"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
-        dropZone.classList.remove("border-blue-500");
+        dropZone.style.background = "transparent";
       });
     });
     dropZone.addEventListener("drop", (e) => {
@@ -304,14 +251,20 @@
     });
 
     const deployForm = document.getElementById("deploy-form");
-    const deployError = document.getElementById("deploy-error");
+    const deployStatus = document.getElementById("deploy-status");
     const deploySubmit = document.getElementById("deploy-submit");
+
+    function setDeployStatus(text, kind) {
+      deployStatus.textContent = text || "";
+      deployStatus.classList.remove("err", "ok");
+      if (kind) deployStatus.classList.add(kind);
+    }
 
     deployForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      deployError.classList.add("hidden");
+      setDeployStatus("");
       deploySubmit.disabled = true;
-      deploySubmit.textContent = "Déploiement...";
+      deploySubmit.textContent = "Déploiement en cours…";
 
       const formData = new FormData();
       formData.append("name", document.getElementById("deploy-name").value);
@@ -326,20 +279,19 @@
 
         if (res.ok) {
           deployForm.reset();
-          fileLabel.textContent = "Glisser-déposer un fichier .zip";
+          fileLabel.textContent = "aucun fichier";
+          setDeployStatus("DÉPLOIEMENT CRÉÉ.", "ok");
           loadDeployments();
         } else {
           const err = await res.json().catch(() => ({}));
           const apiError = typeof err.error === "string" ? err.error : err.error?.message;
-          deployError.textContent = apiError || err.message || "Échec du déploiement.";
-          deployError.classList.remove("hidden");
+          setDeployStatus(apiError || err.message || "Échec du déploiement.", "err");
         }
       } catch (err) {
-        deployError.textContent = "Erreur réseau, réessaie.";
-        deployError.classList.remove("hidden");
+        setDeployStatus("Erreur réseau, réessaie.", "err");
       } finally {
         deploySubmit.disabled = false;
-        deploySubmit.textContent = "Déployer";
+        deploySubmit.textContent = "Déployer maintenant →";
       }
     });
 
