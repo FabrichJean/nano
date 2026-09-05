@@ -8,8 +8,8 @@
   --white: #ffffff;
   --font-display: 'Archivo Black', Impact, 'Arial Black', sans-serif;
   --font-mono: 'Space Mono', ui-monospace, Menlo, Consolas, monospace;
-  --shadow: 6px 6px 0 var(--ink);
-  --shadow-sm: 4px 4px 0 var(--ink);
+  --shadow: 4px 4px 0 var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
 }
 
 * { box-sizing: border-box; }
@@ -61,7 +61,7 @@ a { color: var(--ink); }
 /* ---------- Blocs à bordure épaisse + ombre dure ---------- */
 .brut-block {
   background: var(--white);
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   box-shadow: var(--shadow);
   padding: 24px;
 }
@@ -81,7 +81,7 @@ a { color: var(--ink); }
   max-width: 1040px;
 }
 .brut-nav-item {
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--white);
   color: var(--ink);
   text-decoration: none;
@@ -94,7 +94,7 @@ a { color: var(--ink); }
   font-family: var(--font-mono);
 }
 .brut-nav-item.active { background: var(--ink); color: var(--white); }
-.brut-nav-item:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.brut-nav-item:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
 .brut-nav-spacer { flex: 1; }
 
 /* ---------- Champs ---------- */
@@ -109,7 +109,7 @@ a { color: var(--ink); }
 }
 .brut-input {
   width: 100%;
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--white);
   color: var(--ink);
   font-family: var(--font-mono);
@@ -123,7 +123,7 @@ a { color: var(--ink); }
 /* ---------- Boutons ---------- */
 .brut-btn {
   display: inline-block;
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--ink);
   color: var(--white);
   font-family: var(--font-mono);
@@ -131,23 +131,23 @@ a { color: var(--ink); }
   text-transform: uppercase;
   font-size: 13px;
   padding: 11px 20px;
-  box-shadow: 5px 5px 0 var(--yellow);
+  box-shadow: 3px 3px 0 var(--yellow);
   cursor: pointer;
   text-decoration: none;
   transition: transform 0.06s, box-shadow 0.06s;
 }
-.brut-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--yellow); }
+.brut-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--yellow); }
 .brut-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--yellow); }
-.brut-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 5px 5px 0 var(--yellow); }
-.brut-btn.secondary { background: var(--white); color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
-.brut-btn.secondary:hover { box-shadow: 7px 7px 0 var(--ink); }
-.brut-btn.danger { background: var(--red); border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
-.brut-btn.small { padding: 5px 10px; font-size: 11px; box-shadow: 3px 3px 0 var(--ink); }
-.brut-btn.small:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+.brut-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--yellow); }
+.brut-btn.secondary { background: var(--white); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.brut-btn.secondary:hover { box-shadow: 5px 5px 0 var(--ink); }
+.brut-btn.danger { background: var(--red); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.brut-btn.small { padding: 5px 10px; font-size: 11px; box-shadow: 2px 2px 0 var(--ink); }
+.brut-btn.small:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
 
 /* ---------- Message de statut ---------- */
 .brut-status {
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   padding: 10px 14px;
   font-weight: 700;
   text-transform: uppercase;
@@ -160,7 +160,7 @@ a { color: var(--ink); }
 
 /* ---------- Fiches de déploiement (ticket punk) ---------- */
 .brut-ticket {
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--white);
   box-shadow: var(--shadow-sm);
   padding: 16px 18px;
@@ -202,7 +202,7 @@ a { color: var(--ink); }
   margin-top: 10px;
 }
 .brut-stat {
-  border: 4px solid var(--ink);
+  border: 2px solid var(--ink);
   padding: 10px 12px;
   background: var(--white);
 }
@@ -219,7 +219,7 @@ a { color: var(--ink); }
   letter-spacing: 0.05em;
 }
 
-hr.brut-rule { border: none; border-top: 4px solid var(--ink); margin: 24px 0; }
+hr.brut-rule { border: none; border-top: 2px solid var(--ink); margin: 24px 0; }
 
 .hidden { display: none !important; }
 
