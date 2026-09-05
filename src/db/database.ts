@@ -7,7 +7,9 @@ import { Deployment } from '../types/deployment';
 
 dotenv.config();
 
-const dbPath = path.join(__dirname, '../../data.sqlite');
+const dbPath = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : path.join(__dirname, '../../data.sqlite');
 export const db = new Database(dbPath);
 
 db.pragma('journal_mode = WAL');
