@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/ghost.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Nano - Paramètres</title>
+  <style>
+    body { background: #000000; }
+    .card { background: #0d0d0d; border: 1px solid #222222; }
+    .grad-ring { background: linear-gradient(135deg, #22d3ee, #8b5cf6, #ec4899); }
+    .tab-active { background: #1a1a1a; color: #fff; }
+    .tab-inactive { color: #8a8a8a; }
+    .tab-inactive:hover { color: #fff; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+
+  <header class="border-b border-[#1a1a1a]">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-2 shrink-0">
+        <img src="/ghost.png" alt="Nano" class="w-7 h-7" />
+        <span class="text-lg font-bold tracking-tight">Nano</span>
+      </div>
+
+      <nav class="flex items-center gap-1 flex-1">
+        <a href="/app" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Tableau de Bord
+        </a>
+        <a href="/teams" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Équipes
+        </a>
+        <a href="/settings" class="tab-active flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Paramètres
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="grad-ring w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold p-[2px]">
+          <span id="avatar-inner" class="w-full h-full rounded-full bg-[#0d0d0d] flex items-center justify-center">?</span>
+        </div>
+        <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Se déconnecter</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-20 text-center">
+    <div class="card rounded-2xl p-12">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-4 text-gray-500"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <h1 class="text-xl font-semibold mb-2">Paramètres</h1>
+      <p class="text-gray-400">Bientôt disponible. Les préférences de compte et de plateforme arrivent prochainement.</p>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem("billet");
+
+    function decodeUsername() {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.username || "?";
+      } catch {
+        return "?";
+      }
+    }
+
+    (async () => {
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+      const res = await fetch("/auth", { headers: { "Authorization": `Bearer ${token}` } });
+      if (!res.ok) {
+        localStorage.removeItem("billet");
+        window.location.href = "/login";
+        return;
+      }
+      document.getElementById("avatar-inner").textContent = decodeUsername().slice(0, 1).toUpperCase();
+    })();
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("billet");
+      window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>

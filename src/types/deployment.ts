@@ -1,7 +1,7 @@
 export interface Deployment {
   id: string;
   name: string;
-  createdAt: Date;
+  createdAt: string;
   path: string;
   status: 'active' | 'inactive';
   url: string;
