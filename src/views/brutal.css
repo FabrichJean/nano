@@ -44,7 +44,7 @@ a { color: var(--ink); }
   margin: 0 0 6px;
 }
 .brut-tag {
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.15em;
@@ -85,7 +85,7 @@ a { color: var(--ink); }
   background: var(--white);
   color: var(--ink);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   font-size: 13px;
   padding: 8px 14px;
@@ -101,7 +101,7 @@ a { color: var(--ink); }
 .brut-field { margin-bottom: 18px; }
 .brut-field label {
   display: block;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -149,7 +149,7 @@ a { color: var(--ink); }
 .brut-status {
   border: 2px solid var(--ink);
   padding: 10px 14px;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   font-size: 13px;
   margin: 14px 0 0;
@@ -180,10 +180,10 @@ a { color: var(--ink); }
 }
 .brut-badge {
   display: inline-block;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--ink);
   padding: 0 6px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   margin-left: 8px;
   vertical-align: middle;
@@ -215,7 +215,7 @@ a { color: var(--ink); }
 .brut-stat .label {
   font-size: 11px;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.05em;
 }
 
