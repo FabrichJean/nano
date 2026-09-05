@@ -4,19 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/brutal.css">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/palette.js"></script>
   <title>NANO — PARAMÈTRES</title>
 </head>
 <body>
-  <div class="ui-shell">
-    <div class="ui-nav">
+  <div class="ui-nav">
+    <div class="ui-nav-inner">
       <a href="/app" class="ui-nav-item">Dashboard</a>
       <a href="/teams" class="ui-nav-item">Équipes</a>
       <a href="/settings" class="ui-nav-item active">Paramètres</a>
       <span class="ui-nav-spacer"></span>
+      <span id="palette-switch-slot"></span>
       <span class="ui-nav-item" id="user-label" style="cursor:default;"></span>
       <button type="button" id="logout-btn" class="ui-nav-item">Déconnexion</button>
     </div>
+  </div>
+
+  <div class="ui-shell">
 
     <div class="ui-panel ui-window wide" style="text-align:center; width:100%;">
       <h1 class="ui-logo" style="font-size: clamp(2rem, 6vw, 3.5rem);">PARAMÈTRES</h1>
@@ -49,6 +54,7 @@
         return;
       }
       document.getElementById("user-label").textContent = decodeUsername().toUpperCase();
+      renderPaletteSwitch();
     })();
 
     document.getElementById("logout-btn").addEventListener("click", () => {
