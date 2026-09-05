@@ -4,32 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Nano - Équipes</title>
-  <style>
-    body { background: #000000; }
-    .card { background: #0d0d0d; border: 1px solid #222222; }
-    .grad-ring { background: linear-gradient(135deg, #22d3ee, #8b5cf6, #ec4899); }
-    .tab-active { background: #1a1a1a; color: #fff; }
-    .tab-inactive { color: #8a8a8a; }
-    .tab-inactive:hover { color: #fff; }
-  </style>
+  <link rel="stylesheet" href="/brutal.css">
+  <title>NANO — ÉQUIPES</title>
 </head>
-<body class="min-h-screen text-white">
-
-  <header class="border-b border-[#1a1a1a]">
-    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
-      <div class="flex items-center gap-2 shrink-0">
-        <img src="/ghost.png" alt="Nano" class="w-7 h-7" />
-        <span class="text-lg font-bold tracking-tight">Nano</span>
-      </div>
-
-      <nav class="flex items-center gap-1 flex-1">
-        <a href="/app" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-          Tableau de Bord
-        </a>
-        <a href="/teams" class="tab-active flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium">
+<body>
+  <div class="brut-shell">
+    <div class="brut-nav">
+      <a href="/app" class="brut-nav-item">Dashboard</a>
+      <a href="/teams" class="brut-nav-item active">Équipes</a>
+      <a href="/settings" class="brut-nav-item">Paramètres</a>
+      <span class="brut-nav-spacer"></span>
+      <span class="brut-nav-item" id="user-label" style="cursor:default;"></span>
+      <button type="button" id="logout-btn" class="brut-nav-item">Déconnexion</button>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Équipes
         </a>
