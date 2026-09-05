@@ -190,9 +190,34 @@ a { color: var(--ink); }
 }
 .brut-badge.active { background: var(--yellow); }
 .brut-badge.inactive { background: var(--paper); }
+.brut-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.brut-dot.active { background: #2ecc40; }
+.brut-dot.inactive { background: var(--paper); }
 .brut-meta { font-size: 12.5px; }
 .brut-spark { font-size: 18px; letter-spacing: 1px; }
 .brut-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+/* ---------- Confirmation de suppression (remplace le confirm() natif) ---------- */
+.brut-confirm {
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  padding: 10px 12px;
+  font-size: 12.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+.brut-confirm p { margin: 0; text-align: right; }
+.brut-confirm-actions { display: flex; gap: 8px; }
 
 /* ---------- Grille asymétrique stats ---------- */
 .brut-stats-grid {

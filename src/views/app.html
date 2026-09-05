@@ -42,6 +42,9 @@
           <div id="drop-zone" style="border:2px dashed var(--ink); padding:10px 14px; margin: 6px 0 14px; font-size:12.5px; font-weight:400; text-align:center;">
             OU GLISSE-DÉPOSE UN .ZIP ICI
           </div>
+          <p class="brut-meta" style="margin: -6px 0 14px;">
+            Types de fichiers acceptés : .zip · choisis ou dépose un fichier pour déployer
+          </p>
           <button type="submit" id="deploy-submit" class="brut-btn">Déployer maintenant →</button>
         </form>
         <p id="deploy-status" class="brut-status"></p>
@@ -69,6 +72,8 @@
         </div>
       </div>
     </div>
+
+    <p style="margin-top: 24px; font-size: 12px; text-align:center;">© NANO — deploy or die</p>
   </div>
 
   <script>
@@ -149,17 +154,21 @@
       return `
         <div class="brut-ticket">
           <div>
-            <p class="brut-ticket-name">${dep.name}<span class="brut-badge ${dep.status}">${dep.status}</span></p>
+            <p class="brut-ticket-name">${dep.name}<span class="brut-badge ${dep.status}">${dep.status}</span><span class="brut-dot ${dep.status}"></span></p>
             <p class="brut-meta"><a href="${dep.url}" target="_blank">${dep.url}</a></p>
             <p class="brut-meta">créé le ${formatDate(dep.createdAt)} · santé ${health}% · maj ${relativeTime(dep.createdAt)}</p>
             <p class="brut-spark">${sparkline(dep.id)} <span class="brut-meta">${traffic}k reqs/24h</span></p>
           </div>
-          <div class="brut-actions">
+          <div class="brut-actions" id="actions-${cssEscape(dep.id)}">
             <a href="${dep.url}" target="_blank" class="brut-btn secondary small">Ouvrir</a>
             <button data-id="${dep.id}" class="delete-btn brut-btn danger small">Supprimer</button>
           </div>
         </div>
       `;
+    }
+
+    function cssEscape(id) {
+      return String(id).replace(/[^a-zA-Z0-9_-]/g, "_");
     }
 
     async function loadDeployments() {
@@ -184,7 +193,7 @@
         listEl.innerHTML = deployments.map(deploymentTicket).join("");
 
         document.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", () => deleteDeployment(btn.dataset.id));
+          btn.addEventListener("click", () => askDeleteConfirmation(btn.dataset.id));
         });
 
         const sorted = [...deployments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -204,9 +213,29 @@
       }
     }
 
-    async function deleteDeployment(id) {
-      if (!confirm(`Supprimer "${id}" ? C'est définitif.`)) return;
+    function askDeleteConfirmation(id) {
+      const actionsEl = document.getElementById(`actions-${cssEscape(id)}`);
+      if (!actionsEl) return;
+      const original = actionsEl.innerHTML;
 
+      actionsEl.innerHTML = `
+        <div class="brut-confirm">
+          <p>Supprimer "${id}" ?<br>C'est définitif.</p>
+          <div class="brut-confirm-actions">
+            <button type="button" class="brut-btn danger small confirm-yes">Confirmer</button>
+            <button type="button" class="brut-btn secondary small confirm-no">Annuler</button>
+          </div>
+        </div>
+      `;
+
+      actionsEl.querySelector(".confirm-no").addEventListener("click", () => {
+        actionsEl.innerHTML = original;
+        actionsEl.querySelector(".delete-btn").addEventListener("click", () => askDeleteConfirmation(id));
+      });
+      actionsEl.querySelector(".confirm-yes").addEventListener("click", () => deleteDeployment(id));
+    }
+
+    async function deleteDeployment(id) {
       const res = await fetch(`/api/deployments/${encodeURIComponent(id)}`, {
         method: "DELETE",
         headers: authHeaders(),
