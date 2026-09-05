@@ -3,10 +3,10 @@ import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import path from 'path';
 import deploymentRoutes from './routes/deploymentRoutes';
+import authRoutes from './routes/authRoutes';
 import { injectHeaderScript } from './middleware/injectScript';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { protectRoute } from './middleware/protected';
 import { guardToken } from './middleware/guardtoken';
 
 dotenv.config();
@@ -39,8 +39,20 @@ app.get('/', (_req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', "login.html"));
 });
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', "register.html"));
+});
+app.get('/verify-email', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', "verify-email.html"));
+});
 app.get('/app', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', "app.html"));
+});
+app.get('/teams', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', "teams.html"));
+});
+app.get('/settings', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', "settings.html"));
 });
 
 // Serve static files
@@ -50,7 +62,7 @@ express.static(path.join(__dirname, "../uploads"))
 app.use("*", injectHeaderScript);
 
 app.get('/~/:id*', (_req, res) => {
-  const sub = _req.originalUrl.replace("/~", "")
+  const [sub] = _req.originalUrl.replace("/~", "").split("?");
 
   const basePath = resolveSafeUploadPath(sub);
   if (!basePath) {
@@ -58,19 +70,36 @@ app.get('/~/:id*', (_req, res) => {
     return;
   }
 
-  if(sub.split("/").length !== 2){
-    res.sendFile(basePath)
-    return
+  const segments = sub.split("/").filter(Boolean);
+
+  // Requête sur un fichier/asset précis du déploiement (ex: /~/id/style.css)
+  if (segments.length > 1) {
+    res.sendFile(basePath);
+    return;
   }
-  
-  // Lire les fichiers et dossiers dans le chemin
+
+  // Requête sur la racine du déploiement sans slash final : on redirige pour que
+  // les chemins relatifs de la page (ex: href="style.css") se résolvent sous /~/id/
+  // au lieu du parent /~/.
+  if (!_req.originalUrl.split("?")[0].endsWith("/")) {
+    res.redirect(_req.originalUrl + "/");
+    return;
+  }
+
+  // Le contenu du déploiement est servi directement si un index.html est présent à la racine
+  const rootIndex = path.join(basePath, 'index.html');
+  if (fs.existsSync(rootIndex)) {
+    res.sendFile(rootIndex);
+    return;
+  }
+
+  // Sinon, on tente de trouver un premier sous-dossier (cas d'un zip non aplati)
   fs.readdir(basePath, { withFileTypes: true }, (err, files) => {
       if (err) {
           res.status(404).send('Chemin introuvable');
           return;
       }
 
-      // Trouver le premier dossier
       const firstDirectory = files.find(file => file.isDirectory());
       if (!firstDirectory) {
           res.status(404).send('Aucun dossier trouvé');
@@ -78,12 +107,13 @@ app.get('/~/:id*', (_req, res) => {
       }
 
       const folderPath = path.join(basePath, firstDirectory.name);
-      
+
       res.sendFile(folderPath+"/");
   });
 });
 
 app.use('/api/deployments', deploymentRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get("/auth", guardToken, (_req, res) => {
   res.status(202).send();
@@ -91,10 +121,6 @@ app.get("/auth", guardToken, (_req, res) => {
 
 app.get('/ping', (_req, res) => {
   res.json("pong !");
-});
-
-app.get('/protected', protectRoute, (req, res) => {
-  res.send('Bienvenue dans la zone protégée!');
 });
 
 app.get('*', (req, res, next) => {
