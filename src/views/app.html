@@ -1,14 +1,432 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/ghost.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nano - App</title>
-    <script type="module" crossorigin src="/index-CUSvo23-.js"></script>
-    <link rel="stylesheet" crossorigin href="/index-CPQ4peYu.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/ghost.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Nano - Tableau de Bord</title>
+  <style>
+    body { background: #000000; }
+    .card { background: #0d0d0d; border: 1px solid #222222; }
+    .card-soft { background: #0a0a0a; border: 1px solid #1a1a1a; }
+    .grad-btn { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+    .grad-btn:hover { filter: brightness(1.1); }
+    .grad-ring { background: linear-gradient(135deg, #22d3ee, #8b5cf6, #ec4899); }
+    .sparkline-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: draw 1.4s ease-out forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .pulse-dot { animation: pulse-glow 2.4s ease-in-out infinite; }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.55; r: 2.4; }
+      50% { opacity: 1; r: 3.6; }
+    }
+    .tab-active { background: #1a1a1a; color: #fff; }
+    .tab-inactive { color: #8a8a8a; }
+    .tab-inactive:hover { color: #fff; }
+  </style>
+</head>
+<body class="min-h-screen text-white">
+
+  <header class="border-b border-[#1a1a1a]">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-2 shrink-0">
+        <img src="/ghost.png" alt="Nano" class="w-7 h-7" />
+        <span class="text-lg font-bold tracking-tight">Nano</span>
+      </div>
+
+      <nav class="flex items-center gap-1 flex-1">
+        <a href="/app" class="tab-active flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Tableau de Bord
+        </a>
+        <a href="/teams" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Équipes
+        </a>
+        <a href="/settings" class="tab-inactive flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Paramètres
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <div id="avatar" class="grad-ring w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold p-[2px]">
+          <span id="avatar-inner" class="w-full h-full rounded-full bg-[#0d0d0d] flex items-center justify-center">?</span>
+        </div>
+        <button id="logout-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Se déconnecter</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <div class="lg:col-span-2 flex flex-col gap-6 min-w-0">
+
+      <!-- Nouveau déploiement -->
+      <section class="card rounded-2xl p-6">
+        <h2 class="text-base font-semibold mb-4">Nouveau déploiement</h2>
+        <form id="deploy-form" class="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr_auto] gap-3 items-start">
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">Nom du projet</label>
+            <input
+              type="text" id="deploy-name" name="name" placeholder="Nom du projet" required
+              class="w-full px-3.5 py-2.5 bg-[#0a0a0a] border border-[#222222] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+          </div>
+          <div>
+            <label class="block text-xs text-gray-400 mb-1.5">Fichier de déploiement</label>
+            <div
+              id="drop-zone"
+              class="flex items-center gap-2 px-3.5 py-2.5 bg-[#0a0a0a] border border-dashed border-[#2e2e2e] rounded-lg text-sm text-gray-400 transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="file-label" class="truncate flex-1">Glisser-déposer un fichier .zip</span>
+              <button type="button" id="browse-btn" class="text-xs px-2.5 py-1 rounded-md border border-[#2e2e2e] text-gray-300 hover:border-gray-500 shrink-0">Parcourir</button>
+              <input type="file" id="deploy-file" name="build" accept=".zip" required class="hidden">
+            </div>
+          </div>
+          <button
+            type="submit" id="deploy-submit"
+            class="grad-btn transition-all font-semibold text-sm px-6 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed sm:mt-[22px]"
+          >
+            Déployer
+          </button>
+        </form>
+        <p id="deploy-error" class="text-sm text-red-400 mt-3 hidden"></p>
+      </section>
+
+      <!-- Déploiements -->
+      <section class="card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-semibold">Déploiements</h2>
+          <button id="refresh-btn" class="text-sm text-gray-400 hover:text-white transition-colors">Rafraîchir</button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm min-w-[640px]">
+            <thead>
+              <tr class="text-left text-gray-500 border-b border-[#1a1a1a]">
+                <th class="pb-2 font-medium">Projet</th>
+                <th class="pb-2 font-medium">Micro-analytics</th>
+                <th class="pb-2 font-medium">Trafic (24h)</th>
+                <th class="pb-2 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="deployments-body">
+              <tr><td colspan="4" class="py-6 text-gray-500 text-sm">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="flex flex-col gap-6 min-w-0">
+
+      <!-- Activité récente -->
+      <section class="card rounded-2xl p-5">
+        <h2 class="text-sm font-semibold mb-3">Activité Récente</h2>
+        <ul id="activity-list" class="space-y-3 text-sm">
+          <li class="text-gray-500 text-sm">Chargement...</li>
+        </ul>
+      </section>
+
+      <!-- Performance Globe -->
+      <section class="card rounded-2xl p-5">
+        <h2 class="text-sm font-semibold mb-3">Performance Globale</h2>
+        <svg viewBox="0 0 200 200" class="w-full h-auto">
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#222222" stroke-width="1"/>
+          <ellipse cx="100" cy="100" rx="80" ry="30" fill="none" stroke="#222222" stroke-width="1"/>
+          <ellipse cx="100" cy="100" rx="80" ry="55" fill="none" stroke="#222222" stroke-width="1"/>
+          <line x1="20" y1="100" x2="180" y2="100" stroke="#222222" stroke-width="1"/>
+          <ellipse cx="100" cy="100" rx="30" ry="80" fill="none" stroke="#222222" stroke-width="1"/>
+          <ellipse cx="100" cy="100" rx="55" ry="80" fill="none" stroke="#222222" stroke-width="1"/>
+          <line x1="100" y1="20" x2="100" y2="180" stroke="#222222" stroke-width="1"/>
+          <circle cx="70" cy="72" r="2.6" fill="#22d3ee" class="pulse-dot" style="animation-delay:0s"/>
+          <circle cx="135" cy="88" r="2.6" fill="#8b5cf6" class="pulse-dot" style="animation-delay:.4s"/>
+          <circle cx="105" cy="130" r="2.6" fill="#ec4899" class="pulse-dot" style="animation-delay:.8s"/>
+          <circle cx="60" cy="120" r="2.6" fill="#22d3ee" class="pulse-dot" style="animation-delay:1.2s"/>
+          <circle cx="140" cy="130" r="2.6" fill="#8b5cf6" class="pulse-dot" style="animation-delay:1.6s"/>
+        </svg>
+        <p class="text-xs text-gray-500 text-center mt-1">Répartition indicative des requêtes par région</p>
+      </section>
+
+      <!-- Statistiques rapides -->
+      <section class="card rounded-2xl p-5">
+        <h2 class="text-sm font-semibold mb-3">Statistiques Rapides</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p id="stat-deployments" class="text-2xl font-bold">0</p>
+            <p class="text-xs text-gray-500">Déploiements actifs</p>
+          </div>
+          <div>
+            <p id="stat-requests" class="text-2xl font-bold">0</p>
+            <p class="text-xs text-gray-500">Requêtes (24h)</p>
+          </div>
+          <div>
+            <p id="stat-uptime" class="text-2xl font-bold">99.8%</p>
+            <p class="text-xs text-gray-500">Disponibilité</p>
+          </div>
+          <div>
+            <p id="stat-bandwidth" class="text-2xl font-bold">0 Go</p>
+            <p class="text-xs text-gray-500">Bande passante</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem("billet");
+
+    function authHeaders() {
+      return { "Authorization": `Bearer ${token}` };
+    }
+
+    function decodeUsername() {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.username || "?";
+      } catch {
+        return "?";
+      }
+    }
+
+    async function checkAuth() {
+      if (!token) {
+        window.location.href = "/login";
+        return false;
+      }
+      const res = await fetch("/auth", { headers: authHeaders() });
+      if (!res.ok) {
+        localStorage.removeItem("billet");
+        window.location.href = "/login";
+        return false;
+      }
+      document.getElementById("avatar-inner").textContent = decodeUsername().slice(0, 1).toUpperCase();
+      return true;
+    }
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("billet");
+      window.location.href = "/login";
+    });
+
+    // Nombre déterministe par nom, pour des métriques de démo stables (pas de vraies analytics côté backend)
+    function seededValue(seed, min, max) {
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+      return min + (hash % (max - min));
+    }
+
+    function sparklinePoints(seed) {
+      const points = [];
+      for (let i = 0; i < 12; i++) {
+        points.push(seededValue(seed + i, 8, 32));
+      }
+      const max = Math.max(...points);
+      return points.map((v, i) => `${i * (100 / 11)},${32 - (v / max) * 28}`).join(" ");
+    }
+
+    function relativeTime(value) {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return String(value);
+      const diffMs = Date.now() - date.getTime();
+      const diffMin = Math.round(diffMs / 60000);
+      if (diffMin < 1) return "à l'instant";
+      if (diffMin < 60) return `il y a ${diffMin}m`;
+      const diffH = Math.round(diffMin / 60);
+      if (diffH < 24) return `il y a ${diffH}h`;
+      const diffD = Math.round(diffH / 24);
+      if (diffD < 30) return `il y a ${diffD}j`;
+      const diffMonth = Math.round(diffD / 30);
+      if (diffMonth < 12) return `il y a ${diffMonth} mois`;
+      return `il y a ${Math.round(diffMonth / 12)} an(s)`;
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return String(value);
+      return date.toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function statusBadge(status) {
+      const active = status === "active";
+      return `<span class="text-xs px-2 py-0.5 rounded-full ${active ? "bg-green-500/10 text-green-400" : "bg-gray-500/10 text-gray-400"}">${status}</span>`;
+    }
+
+    function deploymentRow(dep) {
+      const health = (99 + seededValue(dep.id, 0, 10) / 10).toFixed(1);
+      const traffic = seededValue(dep.id + "t", 2, 40);
+      const points = sparklinePoints(dep.id);
+
+      return `
+        <tr class="border-b border-[#1a1a1a] last:border-0">
+          <td class="py-3 pr-4 align-top">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">${dep.name}</span>
+              ${statusBadge(dep.status)}
+            </div>
+            <a href="${dep.url}" target="_blank" class="text-xs text-blue-400 hover:underline break-all">${dep.url}</a>
+            <p class="text-xs text-gray-500 mt-0.5">Créé le ${formatDate(dep.createdAt)}</p>
+          </td>
+          <td class="py-3 pr-4 align-top text-xs text-gray-400">
+            <p class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Santé: ${health}% OK</p>
+            <p class="mt-1">Dernière mise à jour: ${relativeTime(dep.createdAt)}</p>
+          </td>
+          <td class="py-3 pr-4 align-top">
+            <svg viewBox="0 0 100 32" class="w-24 h-8">
+              <polyline points="${points}" fill="none" stroke="#3b82f6" stroke-width="2" class="sparkline-path"/>
+            </svg>
+            <p class="text-xs text-gray-500 mt-0.5">${traffic}k reqs</p>
+          </td>
+          <td class="py-3 align-top text-right whitespace-nowrap">
+            <a href="${dep.url}" target="_blank" class="text-xs px-3 py-1.5 rounded-lg border border-[#2e2e2e] hover:border-gray-500 transition-colors inline-block">Ouvrir</a>
+            <button data-id="${dep.id}" class="delete-btn text-xs px-3 py-1.5 rounded-lg border border-red-900/60 text-red-400 hover:bg-red-900/20 transition-colors ml-2">Supprimer</button>
+          </td>
+        </tr>
+      `;
+    }
+
+    function activityItem(dep) {
+      return `
+        <li class="flex items-start gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 shrink-0"></span>
+          <div class="min-w-0 flex-1">
+            <p class="font-medium truncate">${dep.name}</p>
+            <p class="text-xs text-gray-500">Créé le ${formatDate(dep.createdAt)}</p>
+          </div>
+          <span class="text-xs text-gray-500 shrink-0">${relativeTime(dep.createdAt)}</span>
+        </li>
+      `;
+    }
+
+    async function loadDeployments() {
+      const bodyEl = document.getElementById("deployments-body");
+      const activityEl = document.getElementById("activity-list");
+
+      try {
+        const res = await fetch("/api/deployments", { headers: authHeaders() });
+        const deployments = await res.json();
+
+        if (!Array.isArray(deployments) || deployments.length === 0) {
+          bodyEl.innerHTML = `<tr><td colspan="4" class="py-6 text-gray-500 text-sm">Aucun déploiement pour le moment.</td></tr>`;
+          activityEl.innerHTML = `<li class="text-gray-500 text-sm">Aucune activité.</li>`;
+          document.getElementById("stat-deployments").textContent = "0";
+          document.getElementById("stat-requests").textContent = "0";
+          document.getElementById("stat-bandwidth").textContent = "0 Go";
+          return;
+        }
+
+        bodyEl.innerHTML = deployments.map(deploymentRow).join("");
+
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", () => deleteDeployment(btn.dataset.id));
+        });
+
+        const sorted = [...deployments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        activityEl.innerHTML = sorted.slice(0, 4).map(activityItem).join("");
+
+        const totalTraffic = deployments.reduce((sum, d) => sum + seededValue(d.id + "t", 2, 40), 0);
+        document.getElementById("stat-deployments").textContent = deployments.length;
+        document.getElementById("stat-requests").textContent = `${totalTraffic}k`;
+        document.getElementById("stat-bandwidth").textContent = `${(totalTraffic * 0.03).toFixed(1)} Go`;
+      } catch (err) {
+        bodyEl.innerHTML = `<tr><td colspan="4" class="py-6 text-red-400 text-sm">Erreur lors du chargement des déploiements.</td></tr>`;
+      }
+    }
+
+    async function deleteDeployment(id) {
+      if (!confirm("Supprimer ce déploiement ?")) return;
+
+      const res = await fetch(`/api/deployments/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+
+      if (res.ok || res.status === 204) {
+        loadDeployments();
+      } else {
+        alert("Impossible de supprimer ce déploiement.");
+      }
+    }
+
+    document.getElementById("refresh-btn").addEventListener("click", loadDeployments);
+
+    const fileInput = document.getElementById("deploy-file");
+    const fileLabel = document.getElementById("file-label");
+    const dropZone = document.getElementById("drop-zone");
+
+    document.getElementById("browse-btn").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => {
+      fileLabel.textContent = fileInput.files[0]?.name || "Glisser-déposer un fichier .zip";
+    });
+
+    ["dragover", "dragenter"].forEach((evt) => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropZone.classList.add("border-blue-500");
+      });
+    });
+    ["dragleave", "drop"].forEach((evt) => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("border-blue-500");
+      });
+    });
+    dropZone.addEventListener("drop", (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        fileInput.files = e.dataTransfer.files;
+        fileLabel.textContent = file.name;
+      }
+    });
+
+    const deployForm = document.getElementById("deploy-form");
+    const deployError = document.getElementById("deploy-error");
+    const deploySubmit = document.getElementById("deploy-submit");
+
+    deployForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      deployError.classList.add("hidden");
+      deploySubmit.disabled = true;
+      deploySubmit.textContent = "Déploiement...";
+
+      const formData = new FormData();
+      formData.append("name", document.getElementById("deploy-name").value);
+      formData.append("build", fileInput.files[0]);
+
+      try {
+        const res = await fetch("/api/deployments", {
+          method: "POST",
+          headers: authHeaders(),
+          body: formData,
+        });
+
+        if (res.ok) {
+          deployForm.reset();
+          fileLabel.textContent = "Glisser-déposer un fichier .zip";
+          loadDeployments();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          const apiError = typeof err.error === "string" ? err.error : err.error?.message;
+          deployError.textContent = apiError || err.message || "Échec du déploiement.";
+          deployError.classList.remove("hidden");
+        }
+      } catch (err) {
+        deployError.textContent = "Erreur réseau, réessaie.";
+        deployError.classList.remove("hidden");
+      } finally {
+        deploySubmit.disabled = false;
+        deploySubmit.textContent = "Déployer";
+      }
+    });
+
+    (async () => {
+      const ok = await checkAuth();
+      if (ok) loadDeployments();
+    })();
+  </script>
+</body>
 </html>
