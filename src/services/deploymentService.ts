@@ -47,20 +47,22 @@ export default class DeploymentService {
       // par ce serveur, donc un échec ici doit faire échouer tout le déploiement.
       const domain = toSurgeDomain(id);
       url = await deployToSurge(deploymentPath, domain);
-      // Remove ZIP file after extraction
-      fs.unlinkSync(zipPath);
     } catch (error) {
       fs.rmSync(deploymentPath, { recursive: true, force: true });
       throw error;
     }
 
+    // Le contenu vit maintenant sur surge.sh ; la copie locale ne sert plus qu'à
+    // la préparer avant l'envoi, on ne la garde pas.
+    fs.rmSync(deploymentPath, { recursive: true, force: true });
+
     const deployment: Deployment = {
       id,
       name,
       createdAt: new Date().toISOString(),
-      path: deploymentPath,
+      path: url,
       status: 'active',
-      url: `${this.baseUrl}/~/${id}`,
+      url,
       ownerId
     };
 
@@ -93,11 +95,14 @@ export default class DeploymentService {
     `).all(ownerId) as Deployment[];
   }
 
-  deleteDeployment(id: string, ownerId: string): boolean {
+  async deleteDeployment(id: string, ownerId: string): Promise<boolean> {
     const deployment = this.findById(id);
     if (!deployment || deployment.ownerId !== ownerId) return false;
 
-    fs.rmSync(deployment.path, { recursive: true, force: true });
+    if (deployment.url.endsWith('.surge.sh')) {
+      await teardownSurge(new URL(deployment.url).host);
+    }
+
     db.prepare('DELETE FROM deployments WHERE id = ?').run(id);
     return true;
   }
