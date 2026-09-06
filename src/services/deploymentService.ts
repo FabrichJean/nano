@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { Deployment } from '../types/deployment';
 import { extractZip } from '../utils/fileUtils';
-import { uploadToEpta } from '../utils/epta';
+import { deployToSurge, teardownSurge, toSurgeDomain } from '../utils/surge';
 import { db } from '../db/database';
 
 export class DeploymentExistsError extends Error {
@@ -14,11 +14,9 @@ export class DeploymentExistsError extends Error {
 
 export default class DeploymentService {
   private deploymentsPath: string;
-  private baseUrl: string;
 
   constructor() {
     this.deploymentsPath = path.join(__dirname, '../../uploads');
-    this.baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
     if (!fs.existsSync(this.deploymentsPath)) {
       fs.mkdirSync(this.deploymentsPath, { recursive: true });
@@ -35,22 +33,20 @@ export default class DeploymentService {
 
     fs.mkdirSync(deploymentPath);
 
+    let url: string;
     try {
       const uploadedFile = files.build;
       const zipPath = path.join(deploymentPath, `${name}.zip`);
       await uploadedFile.mv(zipPath);
 
-      // Extract ZIP file directly to the deployment path
+      // Extract ZIP file directly to the deployment path (le zip lui-même est
+      // supprimé par extractZip une fois son contenu extrait)
       await extractZip(zipPath, deploymentPath);
 
-      // Best-effort mirror to Epta: a deployment should still succeed locally
-      // even if that external service is unreachable.
-      try {
-        await uploadToEpta(zipPath);
-      } catch (error) {
-        console.warn(`Failed to upload deployment "${name}" to Epta:`, (error as Error).message || error);
-      }
-
+      // L'hébergement réel se fait sur surge.sh : le site n'est plus servi
+      // par ce serveur, donc un échec ici doit faire échouer tout le déploiement.
+      const domain = toSurgeDomain(id);
+      url = await deployToSurge(deploymentPath, domain);
       // Remove ZIP file after extraction
       fs.unlinkSync(zipPath);
     } catch (error) {
