@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { z } from 'zod';
 import DeploymentService, { DeploymentExistsError } from '../services/deploymentService';
 import { AuthenticatedRequest } from '../middleware/requireAuth';
+import { SurgeDeployError } from '../utils/surge';
 
 const deploymentService = new DeploymentService();
 
@@ -35,6 +36,8 @@ export const createDeployment = async (req: AuthenticatedRequest, res: Response)
     if (error instanceof DeploymentExistsError) {
       return res.status(409).json({ error: error.message });
     }
+    if (error instanceof SurgeDeployError) {
+      return res.status(502).json({ error: `Échec du déploiement sur surge.sh : ${error.message}` });
     res.status(500).json({ error, message: 'Failed to create deployment' });
   }
 };
