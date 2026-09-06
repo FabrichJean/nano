@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "express-fileupload": "^1.4.3",
     "jsonwebtoken": "^9.0.2",
+    "surge": "^0.44.1",
     "unzipper": "^0.10.14",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
