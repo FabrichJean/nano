@@ -4,8 +4,6 @@ import fileUpload from 'express-fileupload';
 import path from 'path';
 import deploymentRoutes from './routes/deploymentRoutes';
 import authRoutes from './routes/authRoutes';
-import { injectHeaderScript } from './middleware/injectScript';
-import fs from 'fs';
 import dotenv from 'dotenv';
 import { guardToken } from './middleware/guardtoken';
 
@@ -13,18 +11,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const uploadsDir = path.join(__dirname, '../uploads');
-
-function resolveSafeUploadPath(sub: string): string | null {
-  const resolved = path.normalize(path.join(uploadsDir, sub));
-  if (resolved !== uploadsDir && !resolved.startsWith(uploadsDir + path.sep)) {
-    return null;
-  }
-  return resolved;
-}
 
 app.use(cors({
-  origin: '*' 
+  origin: '*'
 }));
 app.use(express.json());
 const MAX_DEPLOYMENT_SIZE_BYTES = 50 * 1024 * 1024;
@@ -61,48 +50,7 @@ app.get('/settings', (req, res) => {
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'views')));
-express.static(path.join(__dirname, "../uploads"))
 
-app.use("*", injectHeaderScript);
-
-app.get('/~/:id*', (_req, res) => {
-  const [sub] = _req.originalUrl.replace("/~", "").split("?");
-
-  const basePath = resolveSafeUploadPath(sub);
-  if (!basePath) {
-    res.status(400).send('Chemin invalide');
-    return;
-  }
-
-  const segments = sub.split("/").filter(Boolean);
-
-  // Requête sur un fichier/asset précis du déploiement (ex: /~/id/style.css)
-  if (segments.length > 1) {
-    res.sendFile(basePath);
-    return;
-  }
-
-  // Requête sur la racine du déploiement sans slash final : on redirige pour que
-  // les chemins relatifs de la page (ex: href="style.css") se résolvent sous /~/id/
-  // au lieu du parent /~/.
-  if (!_req.originalUrl.split("?")[0].endsWith("/")) {
-    res.redirect(_req.originalUrl + "/");
-    return;
-  }
-
-  // Le contenu du déploiement est servi directement si un index.html est présent à la racine
-  const rootIndex = path.join(basePath, 'index.html');
-  if (fs.existsSync(rootIndex)) {
-    res.sendFile(rootIndex);
-    return;
-  }
-
-  // Sinon, on tente de trouver un premier sous-dossier (cas d'un zip non aplati)
-  fs.readdir(basePath, { withFileTypes: true }, (err, files) => {
-      if (err) {
-          res.status(404).send('Chemin introuvable');
-          return;
-      }
 
       const firstDirectory = files.find(file => file.isDirectory());
       if (!firstDirectory) {

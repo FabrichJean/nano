@@ -38,6 +38,7 @@ export const createDeployment = async (req: AuthenticatedRequest, res: Response)
     }
     if (error instanceof SurgeDeployError) {
       return res.status(502).json({ error: `Échec du déploiement sur surge.sh : ${error.message}` });
+    }
     res.status(500).json({ error, message: 'Failed to create deployment' });
   }
 };
@@ -55,8 +56,8 @@ export const getAllDeployments = (req: AuthenticatedRequest, res: Response) => {
   res.json(deployments);
 };
 
-export const deleteDeployment = (req: AuthenticatedRequest, res: Response) => {
-  const success = deploymentService.deleteDeployment(req.params.id, req.user!.id);
+export const deleteDeployment = async (req: AuthenticatedRequest, res: Response) => {
+  const success = await deploymentService.deleteDeployment(req.params.id, req.user!.id);
   if (!success) {
     return res.status(404).json({ error: 'Deployment not found' });
   }
