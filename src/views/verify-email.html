@@ -4,30 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/app.css">
-  <script src="/palette.js"></script>
-  <title>NANO — VÉRIFICATION</title>
+  <link rel="stylesheet" href="/skills.css">
+  <title>NANO — Vérification</title>
 </head>
 <body>
-  <div class="ui-shell">
-    <div class="ui-panel ui-window">
-      <h1 class="ui-logo" style="font-size: clamp(1.6rem, 5vw, 2.2rem);">NANO</h1>
-      <p class="ui-tag">★ prouve que t'es toi ★</p>
-      <h2 class="ui-h">Vérifie ton email</h2>
-      <p id="subtitle" style="font-weight: 400; margin: -6px 0 18px;">
-        Un code à 6 chiffres a été envoyé par email.
-      </p>
-
-      <form id="verify-form">
-        <input type="hidden" id="identifier" name="identifier">
-        <div class="ui-field">
-          <label for="code">Code</label>
-          <input
-            type="text" id="code" name="code" class="ui-input code"
-            inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
-            placeholder="000000" autocomplete="one-time-code" required autofocus
-          >
+  <div class="sk-auth-shell">
+    <div class="sk-auth-card">
+      <div class="sk-auth-title">
+        <div class="sk-glitch-wrap xsmall">
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <h1 class="sk-glitch">NANO</h1>
         </div>
+        <p class="sk-tagline">deployment shell</p>
+      </div>
 
         <button type="submit" id="submit-btn" class="ui-btn">Vérifier →</button>
         <button type="button" id="resend-btn" class="ui-btn secondary" style="margin-left: 10px;">Renvoyer</button>

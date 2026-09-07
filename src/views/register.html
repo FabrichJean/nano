@@ -28,25 +28,35 @@
           <div class="sk-field">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" id="username" name="username" class="sk-input" minlength="3" autocomplete="username" required autofocus>
+          </div>
+          <div class="sk-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="sk-input" autocomplete="email" required>
+          </div>
+          <div class="sk-field">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" class="sk-input" minlength="6" autocomplete="new-password" required>
+          </div>
+          <div class="sk-field">
+            <label for="confirm-password">Confirmer</label>
+            <input type="password" id="confirm-password" name="confirm-password" class="sk-input" minlength="6" autocomplete="new-password" required>
+          </div>
+          <button type="submit" id="submit-btn" class="sk-btn" style="width:100%; justify-content:center;">$ register →</button>
+        </form>
+        <p id="status" class="sk-status"></p>
+      </div>
 
-      <p id="status" class="ui-status"></p>
+      <p style="text-align:center; color:var(--dim); font-size:13px;">
+        Déjà membre ? <a href="/login" style="text-decoration:underline;">Connecte-toi</a>
+      </p>
     </div>
-
-    <p style="margin-top: 22px; font-weight: 400; text-transform: uppercase; font-size: 13px;">
-      Déjà membre ? <a href="/login" style="text-decoration: underline;">Connecte-toi</a>
-    </p>
   </div>
 
   <script>
     window.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem("billet");
       if (!token) return;
-
-      const res = await fetch("/auth", {
-        method: "GET",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
-
+      const res = await fetch("/auth", { headers: { "Authorization": `Bearer ${token}` } });
       if (res.ok) {
         window.location.href = "/app";
       } else {
