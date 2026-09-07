@@ -28,25 +28,27 @@
           <div class="sk-field">
             <label for="identifier">Identifiant / Email</label>
             <input type="text" id="identifier" name="identifier" class="sk-input" autocomplete="username" required autofocus>
+          </div>
+          <div class="sk-field">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" class="sk-input" autocomplete="current-password" required>
+          </div>
+          <button type="submit" id="submit-btn" class="sk-btn" style="width:100%; justify-content:center;">$ login →</button>
+        </form>
+        <p id="status" class="sk-status"></p>
+      </div>
 
-      <p id="status" class="ui-status"></p>
+      <p style="text-align:center; color:var(--dim); font-size:13px;">
+        Pas de compte ? <a href="/register" style="text-decoration:underline;">Inscris-toi</a>
+      </p>
     </div>
-
-    <p style="margin-top: 22px; font-weight: 400; text-transform: uppercase; font-size: 13px;">
-      Pas de compte ? <a href="/register" style="text-decoration: underline;">Inscris-toi ici</a>
-    </p>
   </div>
 
   <script>
     window.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem("billet");
       if (!token) return;
-
-      const res = await fetch("/auth", {
-        method: "GET",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
-
+      const res = await fetch("/auth", { headers: { "Authorization": `Bearer ${token}` } });
       if (res.ok) {
         window.location.href = "/app";
       } else {
