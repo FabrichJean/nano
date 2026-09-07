@@ -33,3 +33,37 @@ export function deployToSurge(projectPath: string, domain: string): Promise<stri
       SURGE_BIN,
       [projectPath, domain],
       {
+        env: { ...process.env },
+        timeout: DEPLOY_TIMEOUT_MS,
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(new SurgeDeployError(stderr?.trim() || stdout?.trim() || error.message));
+          return;
+        }
+        resolve(`https://${domain}`);
+      }
+    );
+  });
+}
+
+/** Retire un site de surge.sh. Best-effort : on ne bloque jamais la suppression locale dessus. */
+export function teardownSurge(domain: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (!process.env.SURGE_TOKEN) {
+      resolve();
+      return;
+    }
+    execFile(
+      SURGE_BIN,
+      ['teardown', domain],
+      { env: { ...process.env }, timeout: DEPLOY_TIMEOUT_MS },
+      (error, stdout, stderr) => {
+        if (error) {
+          console.warn(`Échec du teardown surge.sh pour ${domain}:`, stderr?.trim() || stdout?.trim() || error.message);
+        }
+        resolve();
+      }
+    );
+  });
+}

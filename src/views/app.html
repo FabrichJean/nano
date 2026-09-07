@@ -4,77 +4,89 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/app.css">
-  <script src="/palette.js"></script>
-  <title>NANO — DASHBOARD</title>
+  <link rel="stylesheet" href="/skills.css">
+  <title>NANO — Dashboard</title>
 </head>
 <body>
-  <div class="ui-nav">
-    <div class="ui-nav-inner">
-      <a href="/app" class="ui-nav-item active">Dashboard</a>
-      <a href="/teams" class="ui-nav-item">Équipes</a>
-      <a href="/settings" class="ui-nav-item">Paramètres</a>
-      <span class="ui-nav-spacer"></span>
-      <span id="palette-switch-slot"></span>
-      <span class="ui-nav-item" id="user-label" style="cursor:default;"></span>
-      <button type="button" id="logout-btn" class="ui-nav-item">Déconnexion</button>
+  <div class="sk-nav">
+    <div class="sk-nav-brand">
+      <img src="/ghost.png" alt="" width="18" height="18" />
+      <span class="sk-nav-crumb">/</span> Dashboard
     </div>
+    <div class="sk-nav-links">
+      <a href="/app" class="sk-nav-link active">Dashboard</a>
+      <a href="/teams" class="sk-nav-link">Équipes</a>
+      <a href="/settings" class="sk-nav-link">Paramètres</a>
+    </div>
+    <span class="sk-nav-user" id="user-label"></span>
+    <button type="button" id="logout-btn" class="sk-nav-btn">Déconnexion</button>
   </div>
 
-  <div class="ui-shell">
-
-    <div class="ui-window wide" style="width:100%;">
-      <div class="ui-panel accent" style="margin-bottom: 24px;">
-        <h1 class="ui-logo" style="font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 18px;">DEPLOY.</h1>
-        <h2 class="ui-h" style="margin-bottom:14px;">Nouveau déploiement</h2>
-        <form id="deploy-form">
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-            <div class="ui-field" style="margin-bottom:10px;">
-              <label for="deploy-name">Nom du site</label>
-              <input type="text" id="deploy-name" name="name" class="ui-input" placeholder="mon-site" required>
-            </div>
-            <div class="ui-field" style="margin-bottom:10px;">
-              <label>Fichier .zip</label>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <button type="button" id="browse-btn" class="ui-btn secondary small">Choisir</button>
-                <span id="file-label" style="font-size:12.5px; font-weight:400;">aucun fichier</span>
-                <input type="file" id="deploy-file" name="build" accept=".zip" required class="hidden">
-              </div>
-            </div>
-          </div>
-          <div id="drop-zone" style="border:2px dashed var(--ink); padding:10px 14px; margin: 6px 0 14px; font-size:12.5px; font-weight:400; text-align:center;">
-            OU GLISSE-DÉPOSE UN .ZIP ICI
-          </div>
-          <p class="ui-meta" style="margin: -6px 0 14px;">
-            Types de fichiers acceptés : .zip · choisis ou dépose un fichier pour déployer
-          </p>
-          <button type="submit" id="deploy-submit" class="ui-btn">Déployer maintenant →</button>
-        </form>
-        <p id="deploy-status" class="ui-status"></p>
-      </div>
-
-      <div class="ui-panel" style="margin-bottom: 24px;">
-        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-          <h2 class="ui-h" id="deployments-heading" style="margin:0;">Déploiements</h2>
-          <button type="button" id="refresh-btn" class="ui-btn secondary small">↻ Rafraîchir</button>
+  <div class="sk-page">
+    <div class="sk-hero">
+      <div>
+        <div class="sk-glitch-wrap">
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <h1 class="sk-glitch">NANO</h1>
         </div>
-
-        <div id="deployments-list"></div>
+        <p class="sk-tagline">the self-serve deployment shell</p>
       </div>
-
-      <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 24px;" id="bottom-grid">
-        <div class="ui-panel tight">
-          <h2 class="ui-h" style="font-size:1rem;">Activité récente</h2>
-          <div id="activity-log" style="font-size:13px; font-weight:400;"></div>
-        </div>
-        <div class="ui-panel ink tight">
-          <h2 class="ui-h" style="font-size:1rem;">Stats</h2>
-          <div class="ui-stats-grid" id="stats-grid" style="margin-top:0;"></div>
-        </div>
-      </div>
+      <p class="sk-lede">Déploie n'importe quel site statique en quelques secondes. Chaque déploiement est publié en direct sur surge.sh.</p>
     </div>
 
-    <p style="margin-top: 24px; font-size: 12px; text-align:center;">© NANO — deploy or die</p>
+    <p class="sk-label">Nouveau déploiement</p>
+    <div class="sk-panel">
+      <form id="deploy-form">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="sk-field">
+            <label for="deploy-name">Nom du site</label>
+            <input type="text" id="deploy-name" name="name" class="sk-input" placeholder="mon-site" required>
+          </div>
+          <div class="sk-field">
+            <label>Fichier .zip</label>
+            <div class="sk-cmd">
+              <span id="file-label" style="color:var(--dim);">aucun fichier sélectionné</span>
+              <button type="button" id="browse-btn" class="sk-btn secondary small">Choisir</button>
+            </div>
+            <input type="file" id="deploy-file" name="build" accept=".zip" required class="hidden">
+          </div>
+        </div>
+        <div id="drop-zone" style="border:1px dashed var(--line); padding:12px; margin:4px 0 16px; text-align:center; color:var(--dimmer); font-size:12px;">
+          ou glisse-dépose un .zip ici
+        </div>
+        <button type="submit" id="deploy-submit" class="sk-btn">$ deploy →</button>
+      </form>
+      <p id="deploy-status" class="sk-status"></p>
+    </div>
+
+    <p class="sk-label">Déploiements</p>
+    <div class="sk-search">
+      <span>⌕</span>
+      <span id="deployments-count">Chargement…</span>
+      <kbd>⌘R</kbd>
+    </div>
+    <div class="sk-tabs">
+      <button type="button" class="sk-tab active">Tous</button>
+      <button type="button" id="refresh-btn" class="sk-tab" style="margin-left:auto;">↻ Rafraîchir</button>
+    </div>
+
+    <table class="sk-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Site</th>
+          <th>Activité (12pt)</th>
+          <th class="num">Trafic/24h</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="deployments-body">
+        <tr><td colspan="5" style="color:var(--dim); padding:20px 10px;">Chargement…</td></tr>
+      </tbody>
   </div>
 
   <script>
