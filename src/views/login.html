@@ -4,29 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/app.css">
-  <script src="/palette.js"></script>
-  <title>NANO — LOGIN</title>
+  <link rel="stylesheet" href="/skills.css">
+  <title>NANO — Connexion</title>
 </head>
 <body>
-  <div class="ui-shell">
-    <div class="ui-panel ui-window">
-      <h1 class="ui-logo" style="font-size: clamp(1.6rem, 5vw, 2.2rem);">NANO</h1>
-      <p class="ui-tag">★ deploy or die ★</p>
-      <h2 class="ui-h">Connexion</h2>
-
-      <form id="login-form">
-        <div class="ui-field">
-          <label for="identifier">Identifiant / Email</label>
-          <input type="text" id="identifier" name="identifier" class="ui-input" autocomplete="username" required autofocus>
+  <div class="sk-auth-shell">
+    <div class="sk-auth-card">
+      <div class="sk-auth-title">
+        <div class="sk-glitch-wrap xsmall">
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <h1 class="sk-glitch">NANO</h1>
         </div>
-        <div class="ui-field">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" class="ui-input" autocomplete="current-password" required>
-        </div>
+        <p class="sk-tagline">deployment shell</p>
+      </div>
 
-        <button type="submit" id="submit-btn" class="ui-btn">Se connecter →</button>
-      </form>
+      <div class="sk-panel">
+        <p class="sk-h">Connexion</p>
+        <form id="login-form">
+          <div class="sk-field">
+            <label for="identifier">Identifiant / Email</label>
+            <input type="text" id="identifier" name="identifier" class="sk-input" autocomplete="username" required autofocus>
 
       <p id="status" class="ui-status"></p>
     </div>
