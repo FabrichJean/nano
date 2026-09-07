@@ -4,37 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/app.css">
-  <script src="/palette.js"></script>
-  <title>NANO — INSCRIPTION</title>
+  <link rel="stylesheet" href="/skills.css">
+  <title>NANO — Inscription</title>
 </head>
 <body>
-  <div class="ui-shell">
-    <div class="ui-panel ui-window">
-      <h1 class="ui-logo" style="font-size: clamp(1.6rem, 5vw, 2.2rem);">NANO</h1>
-      <p class="ui-tag">★ rejoins le club ★</p>
-      <h2 class="ui-h">Créer un compte</h2>
+  <div class="sk-auth-shell">
+    <div class="sk-auth-card">
+      <div class="sk-auth-title">
+        <div class="sk-glitch-wrap xsmall">
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <span class="sk-glitch-layer">NANO</span>
+          <h1 class="sk-glitch">NANO</h1>
+        </div>
+        <p class="sk-tagline">deployment shell</p>
+      </div>
 
-      <form id="register-form">
-        <div class="ui-field">
-          <label for="username">Nom d'utilisateur</label>
-          <input type="text" id="username" name="username" class="ui-input" minlength="3" autocomplete="username" required autofocus>
-        </div>
-        <div class="ui-field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" class="ui-input" autocomplete="email" required>
-        </div>
-        <div class="ui-field">
-          <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" class="ui-input" minlength="6" autocomplete="new-password" required>
-        </div>
-        <div class="ui-field">
-          <label for="confirm-password">Confirmer</label>
-          <input type="password" id="confirm-password" name="confirm-password" class="ui-input" minlength="6" autocomplete="new-password" required>
-        </div>
-
-        <button type="submit" id="submit-btn" class="ui-btn">Créer le compte →</button>
-      </form>
+      <div class="sk-panel">
+        <p class="sk-h">Créer un compte</p>
+        <form id="register-form">
+          <div class="sk-field">
+            <label for="username">Nom d'utilisateur</label>
+            <input type="text" id="username" name="username" class="sk-input" minlength="3" autocomplete="username" required autofocus>
 
       <p id="status" class="ui-status"></p>
     </div>

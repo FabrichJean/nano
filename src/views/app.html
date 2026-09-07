@@ -87,6 +87,8 @@
       <tbody id="deployments-body">
         <tr><td colspan="5" style="color:var(--dim); padding:20px 10px;">Chargement…</td></tr>
       </tbody>
+    </table>
+    <div id="deployments-pagination" class="sk-pagination"></div>
   </div>
 
   <script>
@@ -115,8 +117,7 @@
         window.location.href = "/login";
         return false;
       }
-      document.getElementById("user-label").textContent = decodeUsername().toUpperCase();
-      renderPaletteSwitch();
+      document.getElementById("user-label").textContent = decodeUsername();
       return true;
     }
 
@@ -131,12 +132,11 @@
       return min + (hash % (max - min));
     }
 
-    const BLOCKS = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
-    function sparkline(seed, len) {
-      len = len || 10;
-      let s = "";
-      for (let i = 0; i < len; i++) s += BLOCKS[seededValue(seed + i, 0, BLOCKS.length)];
-      return s;
+    function sparklinePoints(seed) {
+      const points = [];
+      for (let i = 0; i < 12; i++) points.push(seededValue(seed + i, 8, 32));
+      const max = Math.max(...points);
+      return points.map((v, i) => `${i * (100 / 11)},${32 - (v / max) * 28}`).join(" ");
     }
 
     function relativeTime(value) {
@@ -155,76 +155,93 @@
       return `il y a ${Math.round(diffMonth / 12)} an(s)`;
     }
 
-    function formatDate(value) {
-      const date = new Date(value);
-      if (isNaN(date.getTime())) return String(value);
-      return date.toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "numeric" });
-    }
-
-    function deploymentTicket(dep) {
-      const health = (99 + seededValue(dep.id, 0, 10) / 10).toFixed(1);
-      const traffic = seededValue(dep.id + "t", 2, 40);
-
-      return `
-        <div class="ui-item">
-          <span class="ui-led ${dep.status}"></span>
-          <div>
-            <p class="ui-item-name">${dep.name}<span class="ui-badge ${dep.status}">${dep.status}</span></p>
-            <p class="ui-meta"><a href="${dep.url}" target="_blank">${dep.url}</a></p>
-            <p class="ui-meta">créé le ${formatDate(dep.createdAt)} · santé ${health}% · maj ${relativeTime(dep.createdAt)}</p>
-            <p class="ui-meter-text">${sparkline(dep.id)} <span class="ui-meta">${traffic}k reqs/24h</span></p>
-          </div>
-          <div class="ui-actions" id="actions-${cssEscape(dep.id)}">
-            <a href="${dep.url}" target="_blank" class="ui-btn secondary small">Ouvrir</a>
-            <button data-id="${dep.id}" class="delete-btn ui-btn danger small">Supprimer</button>
-          </div>
-        </div>
-      `;
-    }
-
     function cssEscape(id) {
       return String(id).replace(/[^a-zA-Z0-9_-]/g, "_");
     }
 
+    function deploymentRow(dep, rank) {
+      const traffic = seededValue(dep.id + "t", 2, 40);
+      const points = sparklinePoints(dep.id);
+
+      return `
+        <tr>
+          <td class="sk-rank">${rank}</td>
+          <td>
+            <span class="sk-item-name">${dep.name}</span><span class="sk-item-owner">${dep.status}</span>
+            <span class="sk-badge ${dep.status}">${dep.status}</span>
+            <a class="sk-item-url" href="${dep.url}" target="_blank">${dep.url}</a>
+            <span class="sk-item-url">créé ${relativeTime(dep.createdAt)}</span>
+          </td>
+          <td>
+            <svg class="sk-spark" viewBox="0 0 100 32" width="120" height="28">
+              <polyline points="${points}"/>
+            </svg>
+          </td>
+          <td class="sk-installs">${traffic}k</td>
+          <td>
+            <div class="sk-actions" id="actions-${cssEscape(dep.id)}">
+              <a href="${dep.url}" target="_blank" class="sk-btn secondary small">Ouvrir</a>
+              <button data-id="${dep.id}" class="delete-btn sk-btn danger small">Suppr.</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    const PAGE_SIZE = 4;
+    let allDeployments = [];
+    let currentPage = 1;
+
+    function renderDeploymentsPage() {
+      const bodyEl = document.getElementById("deployments-body");
+      const paginationEl = document.getElementById("deployments-pagination");
+      const totalPages = Math.max(1, Math.ceil(allDeployments.length / PAGE_SIZE));
+      currentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageItems = allDeployments.slice(start, start + PAGE_SIZE);
+
+      bodyEl.innerHTML = pageItems.map((dep, i) => deploymentRow(dep, start + i + 1)).join("");
+      document.querySelectorAll(".delete-btn").forEach((btn) => {
+        btn.addEventListener("click", () => askDeleteConfirmation(btn.dataset.id));
+      });
+
+      if (totalPages <= 1) {
+        paginationEl.innerHTML = "";
+        return;
+      }
+
+      paginationEl.innerHTML = `
+        <button type="button" class="sk-btn secondary small" id="page-prev" ${currentPage === 1 ? "disabled" : ""}>← Précédent</button>
+        <span>Page ${currentPage} / ${totalPages}</span>
+        <button type="button" class="sk-btn secondary small" id="page-next" ${currentPage === totalPages ? "disabled" : ""}>Suivant →</button>
+      `;
+      document.getElementById("page-prev")?.addEventListener("click", () => { currentPage--; renderDeploymentsPage(); });
+      document.getElementById("page-next")?.addEventListener("click", () => { currentPage++; renderDeploymentsPage(); });
+    }
+
     async function loadDeployments() {
-      const listEl = document.getElementById("deployments-list");
-      const headingEl = document.getElementById("deployments-heading");
-      const activityEl = document.getElementById("activity-log");
-      const statsEl = document.getElementById("stats-grid");
+      const bodyEl = document.getElementById("deployments-body");
+      const paginationEl = document.getElementById("deployments-pagination");
+      const countEl = document.getElementById("deployments-count");
 
       try {
         const res = await fetch("/api/deployments", { headers: authHeaders() });
         const deployments = await res.json();
 
-        headingEl.textContent = `Déploiements (${deployments.length})`;
+        countEl.textContent = `${deployments.length} déploiement${deployments.length !== 1 ? "s" : ""}`;
 
         if (!Array.isArray(deployments) || deployments.length === 0) {
-          listEl.innerHTML = `<p style="margin:8px 0;"><strong>Aucun déploiement.</strong> Balance ton premier .zip ci-dessus.</p>`;
-          activityEl.innerHTML = `<p>-- rien à signaler --</p>`;
-          statsEl.innerHTML = `<div class="ui-stat"><span class="num">0</span><span class="label">sites</span></div>`;
+          allDeployments = [];
+          bodyEl.innerHTML = `<tr><td colspan="5" style="color:var(--dim); padding:20px 10px;">Aucun déploiement. Envoie ton premier .zip ci-dessus.</td></tr>`;
+          paginationEl.innerHTML = "";
           return;
         }
 
-        listEl.innerHTML = deployments.map(deploymentTicket).join("");
-
-        document.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", () => askDeleteConfirmation(btn.dataset.id));
-        });
-
-        const sorted = [...deployments].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        activityEl.innerHTML = sorted.slice(0, 5).map((d) =>
-          `<p style="margin:4px 0;">▸ ${d.name} — ${relativeTime(d.createdAt)}</p>`
-        ).join("");
-
-        const totalTraffic = deployments.reduce((sum, d) => sum + seededValue(d.id + "t", 2, 40), 0);
-        statsEl.innerHTML = `
-          <div class="ui-stat on-ink"><span class="num">${deployments.length}</span><span class="label">sites</span></div>
-          <div class="ui-stat on-ink"><span class="num">${totalTraffic}k</span><span class="label">reqs/24h</span></div>
-          <div class="ui-stat on-ink"><span class="num">99.8%</span><span class="label">uptime</span></div>
-          <div class="ui-stat on-ink"><span class="num">${(totalTraffic * 0.03).toFixed(1)}</span><span class="label">Go bande passante</span></div>
-        `;
+        allDeployments = deployments;
+        renderDeploymentsPage();
       } catch (err) {
-        listEl.innerHTML = `<div class="ui-status err" style="display:block;">ERREUR DE CHARGEMENT</div>`;
+        bodyEl.innerHTML = `<tr><td colspan="5" style="color:var(--red); padding:20px 10px;">Erreur de chargement</td></tr>`;
       }
     }
 
@@ -234,11 +251,11 @@
       const original = actionsEl.innerHTML;
 
       actionsEl.innerHTML = `
-        <div class="ui-confirm">
-          <p>Supprimer "${id}" ?<br>C'est définitif.</p>
-          <div class="ui-confirm-actions">
-            <button type="button" class="ui-btn danger small confirm-yes">Confirmer</button>
-            <button type="button" class="ui-btn secondary small confirm-no">Annuler</button>
+        <div class="sk-confirm">
+          <p>Supprimer "${id}" ?</p>
+          <div class="sk-confirm-actions">
+            <button type="button" class="sk-btn danger small confirm-yes">Confirmer</button>
+            <button type="button" class="sk-btn secondary small confirm-no">Annuler</button>
           </div>
         </div>
       `;
@@ -271,19 +288,19 @@
 
     document.getElementById("browse-btn").addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", () => {
-      fileLabel.textContent = fileInput.files[0]?.name || "aucun fichier";
+      fileLabel.textContent = fileInput.files[0]?.name || "aucun fichier sélectionné";
     });
 
     ["dragover", "dragenter"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
-        dropZone.style.background = "rgba(255,255,255,0.15)";
+        dropZone.style.borderColor = "var(--accent)";
       });
     });
     ["dragleave", "drop"].forEach((evt) => {
       dropZone.addEventListener(evt, (e) => {
         e.preventDefault();
-        dropZone.style.background = "transparent";
+        dropZone.style.borderColor = "var(--line)";
       });
     });
     dropZone.addEventListener("drop", (e) => {
@@ -308,7 +325,7 @@
       event.preventDefault();
       setDeployStatus("");
       deploySubmit.disabled = true;
-      deploySubmit.textContent = "Déploiement en cours…";
+      deploySubmit.textContent = "$ deploying…";
 
       const formData = new FormData();
       formData.append("name", document.getElementById("deploy-name").value);
@@ -323,8 +340,8 @@
 
         if (res.ok) {
           deployForm.reset();
-          fileLabel.textContent = "aucun fichier";
-          setDeployStatus("DÉPLOIEMENT CRÉÉ.", "ok");
+          fileLabel.textContent = "aucun fichier sélectionné";
+          setDeployStatus("Déploiement créé.", "ok");
           loadDeployments();
         } else {
           const err = await res.json().catch(() => ({}));
@@ -335,7 +352,7 @@
         setDeployStatus("Erreur réseau, réessaie.", "err");
       } finally {
         deploySubmit.disabled = false;
-        deploySubmit.textContent = "Déployer maintenant →";
+        deploySubmit.textContent = "$ deploy →";
       }
     });
 
