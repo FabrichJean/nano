@@ -24,11 +24,15 @@
 
   <div class="sk-page">
     <div class="sk-panel" style="text-align:center; padding:64px 28px;">
-    <div class="ui-panel ui-window wide" style="text-align:center; width:100%;">
-      <h1 class="ui-logo" style="font-size: clamp(2rem, 6vw, 3.5rem);">PARAMÈTRES</h1>
-      <p style="font-weight:400; text-transform:uppercase; margin-top:16px;">
-        Bientôt disponible. Reviens plus tard.
-      </p>
+      <div class="sk-glitch-wrap small" style="margin-left:auto; margin-right:auto;">
+        <span class="sk-glitch-layer">PARAMÈTRES</span>
+        <span class="sk-glitch-layer">PARAMÈTRES</span>
+        <span class="sk-glitch-layer">PARAMÈTRES</span>
+        <span class="sk-glitch-layer">PARAMÈTRES</span>
+        <span class="sk-glitch-layer">PARAMÈTRES</span>
+        <h1 class="sk-glitch">PARAMÈTRES</h1>
+      </div>
+      <p style="color:var(--dim); margin-top:12px;">Bientôt disponible. Reviens plus tard.</p>
     </div>
   </div>
 
@@ -43,6 +47,11 @@
       }
     }
 
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("billet");
+      window.location.href = "/login";
+    });
+
     (async () => {
       if (!token) {
         window.location.href = "/login";
@@ -54,14 +63,8 @@
         window.location.href = "/login";
         return;
       }
-      document.getElementById("user-label").textContent = decodeUsername().toUpperCase();
-      renderPaletteSwitch();
+      document.getElementById("user-label").textContent = decodeUsername();
     })();
-
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("billet");
-      window.location.href = "/login";
-    });
   </script>
 </body>
 </html>
