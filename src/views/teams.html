@@ -4,25 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/ghost.png" />
-  <link rel="stylesheet" href="/app.css">
-  <script src="/palette.js"></script>
-  <title>NANO — ÉQUIPES</title>
+  <link rel="stylesheet" href="/skills.css">
+  <title>NANO — Équipes</title>
 </head>
 <body>
-  <div class="ui-nav">
-    <div class="ui-nav-inner">
-      <a href="/app" class="ui-nav-item">Dashboard</a>
-      <a href="/teams" class="ui-nav-item active">Équipes</a>
-      <a href="/settings" class="ui-nav-item">Paramètres</a>
-      <span class="ui-nav-spacer"></span>
-      <span id="palette-switch-slot"></span>
-      <span class="ui-nav-item" id="user-label" style="cursor:default;"></span>
-      <button type="button" id="logout-btn" class="ui-nav-item">Déconnexion</button>
+  <div class="sk-nav">
+    <div class="sk-nav-brand">
+      <img src="/ghost.png" alt="" width="18" height="18" />
+      <span class="sk-nav-crumb">/</span> Équipes
     </div>
+    <div class="sk-nav-links">
+      <a href="/app" class="sk-nav-link">Dashboard</a>
+      <a href="/teams" class="sk-nav-link active">Équipes</a>
+      <a href="/settings" class="sk-nav-link">Paramètres</a>
+    </div>
+    <span class="sk-nav-user" id="user-label"></span>
+    <button type="button" id="logout-btn" class="sk-nav-btn">Déconnexion</button>
   </div>
 
-  <div class="ui-shell">
-
+  <div class="sk-page">
+    <div class="sk-panel" style="text-align:center; padding:64px 28px;">
     <div class="ui-panel ui-window wide" style="text-align:center; width:100%;">
       <h1 class="ui-logo" style="font-size: clamp(2rem, 6vw, 3.5rem);">ÉQUIPES</h1>
       <p style="font-weight:400; text-transform:uppercase; margin-top:16px;">
